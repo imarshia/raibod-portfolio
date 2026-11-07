@@ -30,6 +30,26 @@ export function todayJalali(): string {
   return formatJalali(new Date());
 }
 
+// Design System v3.2 section 2: dates in the UI are Jalali, format
+// YYYY/MM/DD, Latin digits, dir="ltr". formatJalali above predates the
+// Design System and returns Persian digits; it is kept for reference only.
+// UI display uses this Latin-digit formatter.
+export function formatJalaliLatin(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tehran",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  const j = toJalaali(get("year"), get("month"), get("day"));
+  return `${j.jy}/${String(j.jm).padStart(2, "0")}/${String(j.jd).padStart(2, "0")}`;
+}
+
+export function todayJalaliLatin(): string {
+  return formatJalaliLatin(new Date());
+}
+
 export function jalaliToGregorian(jy: number, jm: number, jd: number): Date {
   const g = toGregorian(jy, jm, jd);
   return new Date(Date.UTC(g.gy, g.gm - 1, g.gd));

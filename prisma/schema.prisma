@@ -1,8 +1,7 @@
-// Prisma schema for the Raibod local PoC foundation.
-// Only three demo tables. This is NOT the final 39-table ERD.
+// Prisma schema for the Raibod Phase 1 skeleton.
+// Two tables: users and sessions (auth only). This is NOT the final 39-table ERD.
+// The demo_bookings table was removed in Phase 1 (migration drop_demo_bookings).
 // Enum values are English codes in the database. Persian labels live only in the UI.
-// The tstzrange column and the Exclusion Constraint are added by hand-edited raw SQL
-// in the migration, because Prisma cannot express them natively.
 
 generator client {
   provider = "prisma-client-js"
@@ -55,20 +54,4 @@ model Session {
   @@index([userId])
   @@index([expiresAt])
   @@map("sessions")
-}
-
-enum DemoBookingStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-}
-
-model DemoBooking {
-  id        String            @id @default(uuid())
-  doctorId  String            @map("doctor_id") @db.Uuid
-  slot      Unsupported("tstzrange")
-  status    DemoBookingStatus @default(PENDING)
-  createdAt DateTime          @default(now()) @map("created_at")
-
-  @@map("demo_bookings")
 }

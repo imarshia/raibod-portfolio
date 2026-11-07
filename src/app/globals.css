@@ -1,15 +1,104 @@
 @import "tailwindcss";
-@import "@heroui/react/styles";
+@import "@heroui/styles";
 @import "@fontsource/vazirmatn/400.css";
 @import "@fontsource/vazirmatn/500.css";
+@import "@fontsource/vazirmatn/600.css";
 @import "@fontsource/vazirmatn/700.css";
+@import "@fontsource/vazirmatn/800.css";
 
-html {
-  font-family: "Vazirmatn", system-ui, sans-serif;
+:root {
+  --background: #FFFFFF;
+  --foreground: #1E1E1C;
+  --surface: #FFFFFF;
+  --surface-2: #F5F2EF;
+  --surface-secondary: #F5F2EF;
+  --muted: #787877;
+  --border: #E6E8E8;
+  --accent: #13847F;
+  --accent-foreground: #FFFFFF;
+  --accent-hover: #10706C;
+  --accent-soft: #E7F3F2;
+  --accent-text: #0D5C59;
+  --field: #FFFFFF;
+  --field-background: #FFFFFF;
+  --field-hover: #F5F2EF;
+  --field-focus: #FFFFFF;
+  --focus: #13847F;
+  --danger: #B91C1C;
+  --success: #2E7D32;
+  --warning: #B45309;
+  --info: #155E75;
+  --radius: 0.75rem;
+  --font-sans: "Vazirmatn", system-ui, Tahoma, sans-serif;
+}
+
+.dark, [data-theme="dark"] {
+  --background: #1E1E1C;
+  --foreground: #F5F2EF;
+  --surface: #262624;
+  --surface-2: #2E2E2C;
+  --surface-secondary: #2E2E2C;
+  --muted: #A5A5A4;
+  --border: #3A3A38;
+  --accent: #5AA9A5;
+  --accent-foreground: #083533;
+  --accent-hover: #89C2BF;
+  --accent-soft: #0A4946;
+  --accent-text: #89C2BF;
+  --field: #262624;
+  --field-background: #262624;
+  --field-hover: #2E2E2C;
+  --field-focus: #262624;
+  --focus: #89C2BF;
+  --danger: #F87171;
+  --success: #4ADE80;
+  --warning: #FBBF24;
+  --info: #7DD3FC;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --color-field: var(--field);
+  --color-field-background: var(--field-background);
+  --color-field-hover: var(--field-hover);
+  --color-field-focus: var(--field-focus);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --radius: var(--radius);
+  --font-sans: var(--font-sans);
+  --text-h1: clamp(1.5625rem, 3vw + 0.75rem, 2rem);
+  --text-h2: clamp(1.25rem, 2vw + 0.75rem, 1.5625rem);
+  --text-h3: 1.25rem;
+  --text-body: 1rem;
+  --text-body-sm: 0.875rem;
+  --text-caption: 0.75rem;
 }
 
 body {
-  font-family: "Vazirmatn", system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Design System v3.2 section 9: the design radius is 0.75rem (12px).
+   HeroUI v3 buttons default to rounded-3xl (24px). This override forces
+   the DS radius on buttons only; other components keep the HeroUI scale
+   until the Design System defines their radii. Verified by computed style
+   in the Playwright test (button radius is 12px). */
+.button {
+  border-radius: var(--radius);
 }
 
 @media print {
