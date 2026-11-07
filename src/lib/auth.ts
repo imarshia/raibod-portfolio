@@ -96,3 +96,51 @@ export async function destroySession(): Promise<void> {
 export function requireRole(user: { role: Role } | null, allowed: Role[]): boolean {
   return user !== null && allowed.includes(user.role);
 }
+
+// --- Login lockout (added 2026-11-07, post-PoC gap) ---
+// An account locks for 15 minutes after 5 consecutive failed logins.
+// Counters live on the User model (failedLoginAttempts, lockedUntil).
+// Unknown mobiles get a plain 401 with no counter, so the lockout never
+// reveals whether a mobile exists. Per-IP limiting is still open (HANDOVER §3).
+
+export const MAX_FAILED_LOGINS = 5;
+export const LOCKOUT_MS = 15 * 60 * 1000;
+
+export function isLockedOut(lockedUntil: Date | null): boolean {
+  return lockedUntil !== null && lockedUntil.getTime() > Date.now();
+}
+
+export async function getLoginLockState(userId: string): Promise<{
+  failedLoginAttempts: number;
+  lockedUntil: Date | null;
+}> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { failedLoginAttempts: true, lockedUntil: true },
+  });
+  return {
+    failedLoginAttempts: user?.failedLoginAttempts ?? 0,
+    lockedUntil: user?.lockedUntil ?? null,
+  };
+}
+
+export async function recordFailedLogin(
+  userId: string,
+  currentAttempts: number,
+): Promise<Date | null> {
+  const attempts = currentAttempts + 1;
+  const lockedUntil =
+    attempts >= MAX_FAILED_LOGINS ? new Date(Date.now() + LOCKOUT_MS) : null;
+  await prisma.user.update({
+    where: { id: userId },
+    data: { failedLoginAttempts: attempts, lockedUntil },
+  });
+  return lockedUntil;
+}
+
+export async function resetLoginAttempts(userId: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { failedLoginAttempts: 0, lockedUntil: null },
+  });
+}

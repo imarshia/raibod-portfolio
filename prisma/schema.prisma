@@ -28,6 +28,11 @@ model User {
   role         Role
   active       Boolean   @default(true)
   lastLoginAt  DateTime? @map("last_login_at")
+  // Login lockout (added 2026-11-07, post-PoC gap). Failed attempts are
+  // counted per account; the account locks for 15 minutes after 5 failures.
+  // Per-IP limiting for unknown mobiles is still open (see HANDOVER §3).
+  failedLoginAttempts Int       @default(0) @map("failed_login_attempts")
+  lockedUntil         DateTime? @map("locked_until")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   sessions     Session[]

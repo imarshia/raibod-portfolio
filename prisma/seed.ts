@@ -30,6 +30,12 @@ async function main() {
       active: true,
     },
   });
+  // Re-seeding also clears any lockout counters, so repeated e2e runs that
+  // submit a wrong password never lock the test accounts (see HANDOVER §3).
+  await prisma.user.updateMany({
+    where: { mobile: { in: ["09120000000", "09120000001"] } },
+    data: { failedLoginAttempts: 0, lockedUntil: null },
+  });
   console.log("Seed done: admin 09120000000 / Admin1234!, seller 09120000001 / Seller1234!");
 }
 

@@ -25,6 +25,19 @@ export default function LoginPage() {
     });
     setBusy(false);
     if (!res.ok) {
+      if (res.status === 429) {
+        const data = (await res.json().catch(() => null)) as {
+          retryAfterSeconds?: number;
+        } | null;
+        const minutes = Math.max(
+          1,
+          Math.ceil((data?.retryAfterSeconds ?? 900) / 60),
+        );
+        setError(
+          `حساب شما به علت تلاش‌های ناموفق قفل شده است. لطفا ${minutes} دقیقه دیگر تلاش کنید.`,
+        );
+        return;
+      }
       setError("موبایل یا رمز درست نیست.");
       return;
     }
