@@ -9,7 +9,7 @@ services:
     container_name: raibod-postgres
     environment:
       POSTGRES_USER: raibod
-      POSTGRES_PASSWORD: raibod_poc_local
+      POSTGRES_PASSWORD: CHANGE_ME
       POSTGRES_DB: raibod_poc
     ports:
       - "5432:5432"

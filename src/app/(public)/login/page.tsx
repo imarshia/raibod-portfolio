@@ -72,7 +72,7 @@ export default function LoginPage() {
             </Button>
           </form>
           <p className="mt-4 text-xs text-muted">
-            حساب تست مدیر: 09120000000 با رمز Admin1234! - فقط برای تست لوکال.
+            حساب تست مدیر: 09120000000 - فقط برای تست لوکال.
           </p>
         </CardContent>
       </Card>

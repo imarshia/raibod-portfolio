@@ -4,7 +4,7 @@
 
 ## خلاصه مدیریتی
 
-فاز ۱ کامل شد: صفحه ها و فرم نمایشی حذف شدند، Design System نسخه ۳٫۲ پیاده شد، پوسته لندینگ و صفحه رزرو و پنل با توکن های سیستم طراحی ساخته شدند، و همه تست ها سبز هستند. دو یافته فنی مهم در این فاز ثبت شد: نماد نقطه ای کامپوننت های ترکیبی HeroUI از کامپوننت سرور کار نمی کند (با قطعه های تخت حل شد)، و دکمه HeroUI به طور پیش فرض ۲۴ پیکسل گردی دارد که با یک override به ۱۲ پیکسل Design System برگشت. یک مورد باز مانده است که نیاز به تصمیم عرشیا دارد: تاریخ در DateField با locale ثابت `fa` با ارقام فارسی نشان داده می شود، در حالی که Design System ارقام لاتین می خواهد.
+فاز ۱ کامل شد: صفحه ها و فرم نمایشی حذف شدند، Design System نسخه ۳٫۲ پیاده شد، پوسته لندینگ و صفحه رزرو و پنل با توکن های سیستم طراحی ساخته شدند، و همه تست ها سبز هستند. دو یافته فنی مهم در این فاز ثبت شد: نماد نقطه ای کامپوننت های ترکیبی HeroUI از کامپوننت سرور کار نمی کند (با قطعه های تخت حل شد)، و دکمه HeroUI به طور پیش فرض ۲۴ پیکسل گردی دارد که با یک override به ۱۲ پیکسل Design System برگشت. مورد باز ارقام DateField با تصمیم عرشیا در ۱۶ آبان ۱۴۰۵ حل شد: locale به `fa-u-nu-latn` تغییر کرد و بررسی مرورگر تایید کرد تقویم جلالی با ارقام لاتین درست کار می کند.
 
 ## چه چیزی تغییر کرد
 
@@ -30,7 +30,7 @@
 
 اضافه شده:
 - `DESIGN_SYSTEM.md` در ریشه ریپو: کپی دقیق فایل سیستم طراحی، بدون هیچ تغییری (md5 هر دو فایل `5945f87a6850cf8e8e671691123cf682`).
-- `src/app/provider.tsx` (جدید): فقط I18nProvider با locale ثابت `fa`.
+- `src/app/provider.tsx` (جدید): فقط I18nProvider با locale ثابت `fa-u-nu-latn` (تصمیم عرشیا، ۱۶ آبان ۱۴۰۵).
 - `src/app/providers.tsx` (جدید): فایل ترکیب شده کلاینت: NextThemesProvider بیرونی (`attribute="class"` ،`defaultTheme="system"` ،`enableSystem` ،`disableTransitionOnChange`)، بعد I18nProvider، بعد `Toast.Provider`.
 - `src/components/ui/button.tsx` ،`text-field.tsx` ،`card.tsx` ،`alert.tsx` ،`theme-toggle.tsx` (جدید): فقط پوشه هایی که لندینگ، ورود و پنل واقعا استفاده می کنند. فقط توکن های معنایی، بدون hex خام در JSX، بدون الگوی HeroUI نسخه ۲.
 
@@ -73,7 +73,7 @@ prisma/
 src/
   app/
     layout.tsx             # fa / rtl / suppressHydrationWarning / Providers
-    provider.tsx           # I18nProvider با locale ثابت fa
+    provider.tsx           # I18nProvider با locale ثابت fa-u-nu-latn
     providers.tsx          # NextThemesProvider + I18nProvider + Toast.Provider
     globals.css            # توکن های DS بخش ۹ + override گردی دکمه + چاپ A5
     (public)/
@@ -129,8 +129,8 @@ tests/e2e.spec.ts    # ۱۰ تست
 
 | مورد بخش ۱۳ | نتیجه |
 |---|---|
-| رشته locale جلالی با `@internationalized/date` | تایید شد: ‏`fa` و `fa-IR` هر دو به تقویم `persian` می رسند (بررسی `Intl.DateTimeFormat().resolvedOptions().calendar`). پس locale ثابت `fa` در Design System درست است و استفاده شد. `createCalendar('persian')` با تاریخ ۱۴۰۵/۰۸/۱۶ درست به ۲۰۲۶-۱۱-۰۷ میلادی می رسد. |
-| ارقام لاتین در DateField با locale ‏`fa` | تایید شد که پیش فرض برآورده نمی شود: زیر `fa` بخش های DateField با ارقام فارسی (۱۴۰۵/۸/۱۶) رندر می شوند. با locale ‏`fa-u-nu-latn` همان تقویم جلالی با ارقام لاتین (1405/8/16) رندر می شود. این تضاد بین «locale ثابت fa» و «ارقام لاتین» در بخش ۲ Design System نیاز به تصمیم عرشیا دارد؛ تغییری داده نشد. (به «موارد باز» نگاه کنید.) |
+| رشته locale جلالی با `@internationalized/date` | تایید شد: `fa` و `fa-IR` هر دو به تقویم `persian` می رسند. با تصمیم عرشیا (۱۶ آبان ۱۴۰۵) locale به `fa-u-nu-latn` تغییر کرد: `Intl.DateTimeFormat("fa-u-nu-latn").resolvedOptions()` تقویم `persian` و `numberingSystem` برابر `latn` می دهد و DateFormatter با این locale تاریخ ۲۰۲۶-۱۱-۰۷ را `1405/08/16` می سازد. `createCalendar('persian')` با تاریخ ۱۴۰۵/۰۸/۱۶ درست به ۲۰۲۶-۱۱-۰۷ میلادی می رسد. |
+| ارقام لاتین در DateField با locale `fa-u-nu-latn` | حل شد با تصمیم عرشیا (۱۶ آبان ۱۴۰۵): locale به `fa-u-nu-latn` تغییر کرد و بررسی مرورگر تایید کرد DateField تاریخ 1405/8/16 را با ارقام لاتین نشان می دهد و تقویم جلالی (آبان ۱۴۰۵) است. تست ماندگار `npm run test:locale` (اسکریپت `scripts/test-locale.ts`) و اسکرین شات `~/workspace/raibod/phase1-screenshots/dev-datefield.png`. |
 | جای `isOpen` در Modal | تایید شد و مثال Design System اصلاح لازم دارد: در ۳٫۲٫۷ ریشه Modal به جای `isOpen`/`onOpenChange`، ‏`state` از نوع `UseOverlayStateReturn` می گیرد؛ `isOpen` فقط ویژگی `Modal.Backdrop` است. `Modal.Container` فقط `placement`/`scroll`/`size` می گیرد. همین الگو برای AlertDialog هم برقرار است. فایل Design System تغییر نکرد؛ این یافته برای تایید عرشیا ثبت شده است. |
 | ترکیب Switch در نسخه ۳٫۲٫۰ | تایید شد: Switch در ۳٫۲٫۷ زیرکامپوننت های Root و Content و Control و Thumb و Icon را دارد و Label ندارد؛ برچسب متن ساده داخل Content است و Description و FieldError (عمومی، از ریشه پکیج) خواهر Content هستند. پس ترکیب یادداشت انتشار نسخه ۳٫۲٫۰ درست است و صفحه مستندات قدیمی است. |
 | ترتیب Providerها | تایید شد در کد و تست تم: NextThemesProvider بیرونی (مالک class روی html) و I18nProvider درونی؛ تست تغییر تم و ماندگاری آن گذشت. |
@@ -145,7 +145,7 @@ tests/e2e.spec.ts    # ۱۰ تست
 
 ## موارد باز و نیازمند تصمیم عرشیا
 
-1. **ارقام لاتین در DateField در برابر locale ثابت `fa`**: با `fa`، تاریخ جلالی درست است ولی ارقام فارسی هستند؛ با `fa-u-nu-latn`، همان تاریخ با ارقام لاتین است. Design System هر دو را می خواهد (locale ثابت `fa` در بخش ۰٫۲ و ارقام لاتین در بخش ۲). گزینه ها: (الف) پذیرش ارقام فارسی در DateField، (ب) استفاده از `fa-u-nu-latn` برای I18nProvider. بدون تصمیم عرشیا تغییری داده نشد.
+1. **ارقام لاتین در DateField در برابر locale ثابت `fa` (حل شد، ۱۶ آبان ۱۴۰۵)**: locale به `fa-u-nu-latn` تغییر کرد. با `fa`، تاریخ جلالی درست بود ولی ارقام فارسی بودند؛ با `fa-u-nu-latn`، همان تاریخ با ارقام لاتین است. بررسی مرورگر (۵ چک) و تست `npm run test:locale` گذشت. بقیه موارد این فهرست هنوز باز هستند.
 2. **مثال Modal در Design System بخش ۵**: مثال `<Modal isOpen={...} onOpenChange={...}>` با ۳٫۲٫۷ سازگار نیست؛ الگوی درست `<Modal state={s}>` با `useOverlayState` است. Design System تغییر نکرد؛ تایید عرشیا لازم است که آیا مثال اصلاح شود یا نه.
 3. **جداکننده Breadcrumbs در RTL**: جداکننده پیش فرض در RTL به راست اشاره می کند و نمی چرخد. در فاز ۱ استفاده نمی شود؛ وقتی لازم شد، جداکننده سفارشی (مثل ChevronLeft) تصمیم می خواهد.
 4. **گردی بقیه کامپوننت ها**: فقط دکمه به ۱۲ پیکسل برگشت. بقیه کامپوننت ها (Modal ،Calendar و...) مقیاس گردی HeroUI را دارند، چون Design System برای آن ها گردی تعریف نکرده است.
@@ -169,5 +169,8 @@ tests/e2e.spec.ts    # ۱۰ تست
 - Build: ‏`npm run build`: ‏`✓ Compiled successfully` و `✓ Generating static pages (9/9)`؛ مسیرها در جدول بالا.
 - e2e: ‏`npm run test:e2e` روی سرور نهایی پورت ۳۰۰۰: ‏`10 passed (10.6s)`.
 - Lockout: ‏`BASE_URL=http://localhost:3000 npm run test:lockout`: ‏`LOCKOUT TEST PASSED (8/8)`؛ سید دوباره اجرا شد و ورود فروشنده ۲۰۰ شد.
-- بررسی DateField و دکمه pending با یک صفحه موقت انجام شد و صفحه پیش از تحویل حذف شد.
+- بررسی DateField با locale جدید `fa-u-nu-latn` با یک صفحه موقت انجام شد (۵ چک مرورگر گذشت: فیلد 1405/8/16 با ارقام لاتین، بدون رقم فارسی، ماه آبان، سال 1405 لاتین، بدون نام ماه میلادی) و صفحه پیش از تحویل حذف شد؛ اسکرین شات در `~/workspace/raibod/phase1-screenshots/dev-datefield.png` است. تست ماندگار locale در `scripts/test-locale.ts` است (`npm run test:locale`).
 - سرورهای تست پس از پایان خاموش شدند؛ PostgreSQL در حال اجرا مانده است.
+- اجرای دوباره کامل تست‌ها پس از تغییر locale (۱۶ آبان ۱۴۰۵، پس از نصب دوباره PostgreSQL به‌علت تعویض ماشین مجازی): lint بدون خطا (۱ هشدار شناخته‌شده)، `test:locale` ۵ از ۵، `test:exclusion` ۳ از ۳، build ‏۹ از ۹، e2e ‏۱۰ از ۱۰ (۱۱٫۲ ثانیه)، lockout ‏۸ از ۸؛ سید دوباره اجرا شد و هر دو حساب تست باز شدند.
+- آماده‌سازی امن برای GitHub (۱۶ آبان ۱۴۰۵، بدون کامیت): رمز دیتابیس و SESSION_SECRET چرخانده شدند و مقادیر واقعی از `.env.example` و `docker-compose.yml` و دستور راه‌اندازی README حذف شدند (جای‌نگهدار CHANGE_ME)؛ `.gitignore` کامل شد؛ رمز نمایشی از صفحه Login و خروجی Seed و جدول README حذف شد. Gitleaks 8.30.1 روی تاریخچه و فایل‌های Trackشده ۰ نشت یافت؛ اجرای کامل تست‌ها پس از چرخش سبز است (lint بدون خطا، locale ‏۵ از ۵، exclusion ‏۳ از ۳، build ‏۹ از ۹، e2e ‏۱۰ از ۱۰، lockout ‏۸ از ۸).
+- محافظ Seed و رمزهای تست از متغیر محیطی (۱۶ آبان ۱۴۰۵، بدون کامیت): `prisma/seed.ts` حالا در Production به‌صورت قطعی متوقف می‌شود (حتی با پرچم)، به `ALLOW_TEST_SEED=true` نیاز دارد و مقصد دیتابیس را پیش از اجرا اعتبارسنجی می‌کند (Allowlist: هاست localhost ،127.0.0.1 ،::1 و دیتابیس `raibod_poc`؛ Docker هم از همین پورت لوکال می‌رسد). رمز هر دو حساب تست از `TEST_ADMIN_PASSWORD` و `TEST_SELLER_PASSWORD` خوانده می‌شود و هیچ رمز ثابتی در کد نیست؛ هر سه فایل تست هم همان متغیرها را می‌خوانند (خواندن `.env` با پکیج `dotenv`). تست ماندگار محافظ در `scripts/test-seed-guard.ts` است (`npm run test:seed-guard`): ۶ از ۶ گذشت (Production، نبود پرچم، هاست غیرمجاز، دیتابیس اشتباه، نبود رمزها، اجرای موفق). اجرای کامل تست‌ها پس از این تغییر سبز است (lint بدون خطا، locale ‏۵ از ۵، exclusion ‏۳ از ۳، seed-guard ‏۶ از ۶، build ‏۹ از ۹، e2e ‏۱۰ از ۱۰، lockout ‏۸ از ۸)؛ اسکن Secret و Gitleaks روی تاریخچه و فایل‌های Trackشده ۰ نشت یافت و هیچ رمز تست ثابتی در فایل‌های Trackشده نیست.

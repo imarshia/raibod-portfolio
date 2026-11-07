@@ -4,6 +4,21 @@
 
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
+import "dotenv/config";
+
+// The admin test password comes from the environment (gitignored .env).
+// It is never hardcoded: a missing variable stops the run loudly.
+function requiredEnv(name: "TEST_ADMIN_PASSWORD"): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(
+      `${name} is not set. Set it in the local .env (see README, test accounts section).`
+    );
+  }
+  return value;
+}
+
+const ADMIN_PASSWORD = requiredEnv("TEST_ADMIN_PASSWORD");
 
 const OUT = "verification";
 
@@ -43,7 +58,7 @@ async function main() {
     const page = await ctx.newPage();
     await page.goto("http://localhost:3000/login", { waitUntil: "networkidle" });
     await page.getByLabel("موبایل").fill("09120000000");
-    await page.getByLabel("رمز عبور").fill("Admin1234!");
+    await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
     await page.getByRole("button", { name: "ورود" }).click();
     await page.waitForURL(/\/panel$/);
     await page.waitForTimeout(800);

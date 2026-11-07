@@ -5,6 +5,22 @@
 // account, and re-seeding unlocks it afterwards.
 
 import { test, expect } from "@playwright/test";
+import "dotenv/config";
+
+// Test-account passwords come from the environment (gitignored .env).
+// They are never hardcoded: a missing variable fails the run loudly.
+function testPassword(name: "TEST_ADMIN_PASSWORD" | "TEST_SELLER_PASSWORD"): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(
+      `${name} is not set. Set it in the local .env (see README, test accounts section).`
+    );
+  }
+  return value;
+}
+
+const ADMIN_PASSWORD = testPassword("TEST_ADMIN_PASSWORD");
+const SELLER_PASSWORD = testPassword("TEST_SELLER_PASSWORD");
 
 test("landing renders with hero, services, and booking CTA", async ({ page }) => {
   await page.goto("/");
@@ -89,7 +105,7 @@ test("wrong password shows a Persian error", async ({ page }) => {
 test("admin login sees the admin section", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("موبایل").fill("09120000000");
-  await page.getByLabel("رمز عبور").fill("Admin1234!");
+  await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "ورود" }).click();
   await expect(page).toHaveURL(/\/panel$/);
   await expect(page.getByTestId("admin-section")).toBeVisible();
@@ -98,7 +114,7 @@ test("admin login sees the admin section", async ({ page }) => {
 test("seller login does not see the admin section", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("موبایل").fill("09120000001");
-  await page.getByLabel("رمز عبور").fill("Seller1234!");
+  await page.getByLabel("رمز عبور").fill(SELLER_PASSWORD);
   await page.getByRole("button", { name: "ورود" }).click();
   await expect(page).toHaveURL(/\/panel$/);
   await expect(page.getByTestId("admin-section")).toHaveCount(0);

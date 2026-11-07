@@ -9,3 +9,9 @@ dist
 test-results
 playwright-report
 tsconfig.tsbuildinfo
+.env.production
+.env.staging
+.DS_Store
+coverage/
+*.pem
+*.key

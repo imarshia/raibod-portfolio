@@ -6,13 +6,23 @@
 // for the e2e suite. Leaves the seller account LOCKED on purpose; unlock it
 // with:  psql -d raibod_poc -c "UPDATE users SET failed_login_attempts=0,
 //   locked_until=NULL WHERE mobile='09120000001';"
-// or simply re-run the seed:  npx tsx prisma/seed.ts
+// or simply re-run the seed:  ALLOW_TEST_SEED=true npx tsx prisma/seed.ts
 // Exits non-zero on any failed check.
+
+import "dotenv/config";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3100";
 const MOBILE = "09120000001";
 const WRONG = "WrongPass123!";
-const RIGHT = "Seller1234!";
+// The seller password comes from the environment (gitignored .env).
+// It is never hardcoded: a missing variable stops the run loudly.
+const RIGHT = process.env.TEST_SELLER_PASSWORD;
+if (!RIGHT) {
+  console.error(
+    "TEST_SELLER_PASSWORD is not set. Set it in the local .env (see README, test accounts section)."
+  );
+  process.exit(1);
+}
 
 let failures = 0;
 function check(name, actual, expected) {

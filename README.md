@@ -40,7 +40,7 @@ PostgreSQL با apt نصب شده است و روی localhost:5432 اجرا می 
 ```bash
 sudo apt-get install -y postgresql postgresql-contrib
 sudo service postgresql start
-sudo -u postgres psql -c "CREATE USER raibod WITH PASSWORD 'raibod_poc_local' CREATEDB;"
+sudo -u postgres psql -c "CREATE USER raibod WITH PASSWORD 'CHANGE_ME' CREATEDB;"
 sudo -u postgres psql -c "CREATE DATABASE raibod_poc OWNER raibod;"
 sudo -u postgres psql -d raibod_poc -c "CREATE EXTENSION IF NOT EXISTS btree_gist;"
 ```
@@ -49,12 +49,14 @@ sudo -u postgres psql -d raibod_poc -c "CREATE EXTENSION IF NOT EXISTS btree_gis
 
 ```bash
 cp .env.example .env
+# در .env مقدارها را پر کنید: رمز دیتابیس همان رمزی که برای کاربر raibod ساختید؛
+# TEST_ADMIN_PASSWORD و TEST_SELLER_PASSWORD رمز حساب‌های تست لوکال هستند.
 npm install --ignore-scripts
 bash scripts/setup-engines.sh
 export PRISMA_QUERY_ENGINE_LIBRARY="$HOME/.cache/prisma/master/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/libquery_engine.so.node"
 export PRISMA_SCHEMA_ENGINE_BINARY="$HOME/.cache/prisma/master/c2990dca591cba766e3b7ef5d9e8a84796e47ab7/debian-openssl-3.0.x/schema-engine"
 npx prisma migrate dev
-npm run db:seed
+ALLOW_TEST_SEED=true npm run db:seed
 npm run dev
 ```
 
@@ -66,24 +68,32 @@ npm run dev
 
 ```bash
 npm run lint
+npm run test:locale
 npm run test:exclusion
+npm run test:seed-guard
 npm run build
 npm run test:e2e
 BASE_URL=http://localhost:3000 npm run test:lockout
 ```
 
-تست قفل ورود را روی یک سرور نهایی در حال اجرا انجام دهید (مثلاً `npm run start -- -p 3000`)؛ حساب فروشنده تست را قفل می‌کند و بعد با `npx tsx prisma/seed.ts` باز می‌شود. دستور `npm run build` پیش از بیلد `prisma generate` را اجرا می‌کند و در این محیط به متغیرهای موتور Prisma در بخش نصب نیاز دارد.
+تست قفل ورود را روی یک سرور نهایی در حال اجرا انجام دهید (مثلاً `npm run start -- -p 3000`)؛ حساب فروشنده تست را قفل می‌کند و بعد با `ALLOW_TEST_SEED=true npx tsx prisma/seed.ts` باز می‌شود. دستور `npm run build` پیش از بیلد `prisma generate` را اجرا می‌کند و در این محیط به متغیرهای موتور Prisma در بخش نصب نیاز دارد.
 
 تست e2e را روی سرور نهایی (`npm run start`) اجرا کنید، نه روی سرور توسعه. روی سرور توسعه، کامپایل هم زمان تست ها را کند و ناپایدار می کند. تست e2e را پیش از تست قفل ورود اجرا کنید، چون تست قفل حساب فروشنده را قفل می کند.
 
 ## ورود با حساب تست
 
-| نقش | موبایل | رمز |
-|---|---|---|
-| مدیر | 09120000000 | Admin1234! |
-| فروشنده | 09120000001 | Seller1234! |
+| نقش | موبایل |
+|---|---|
+| مدیر | 09120000000 |
+| فروشنده | 09120000001 |
 
-این رمزها فقط برای تست لوکال است و باید پیش از هر استفاده واقعی عوض شوند.
+رمز این حساب‌های تست از متغیرهای محیطی `TEST_ADMIN_PASSWORD` و `TEST_SELLER_PASSWORD` در فایل `.env` لوکال خوانده می‌شود و هیچ رمزی در کد ثابت نیست. این حساب‌ها فقط برای تست لوکال هستند و پیش از هر استفاده واقعی باید حذف یا عوض شوند.
+
+## محیط‌ها: Development، Test و Production
+
+- **Development:** دیتابیس لوکال است (PostgreSQL با apt روی localhost:5432، دیتابیس `raibod_poc`) و مقدارها در `.env` لوکال هستند. Seed فقط با پرچم صریح `ALLOW_TEST_SEED=true` و فقط روی همین مقصد لوکال اجرا می‌شود؛ مقصد دیگر رد می‌شود.
+- **Test:** همان دیتابیس و سرور لوکال. تست‌های e2e و قفل ورود و محافظ Seed با همان حساب‌های تست اجرا می‌شوند و رمزها را از متغیرهای محیطی می‌خوانند. تست e2e روی سرور نهایی (`npm run start`) اجرا می‌شود، نه سرور توسعه. تست قفل ورود حساب فروشنده را عمداً قفل می‌کند و Seed آن را باز می‌کند.
+- **Production:** هنوز محیط Production وجود ندارد. وقتی ساخته شد، `NODE_ENV=production` و `DATABASE_URL` غیرلوکال خواهد بود؛ Seed در Production به‌صورت قطعی اجرا نمی‌شود، حتی اگر پرچم ست شده باشد. حساب‌های تست هرگز نباید در Production وجود داشته باشند و اسکریپت Seed جزو برنامه مستقرشده نیست. Secretها در Production از محیط استقرار می‌آیند، نه از `.env.example`.
 
 ## چه چیزی هست
 
@@ -109,7 +119,7 @@ BASE_URL=http://localhost:3000 npm run test:lockout
 - `DESIGN_SYSTEM.md`: نسخه ۳٫۲ سیستم طراحی (کپی دقیق، بدون تغییر)
 - `PRODUCT_SPECIFICATION_v2.1.md`: مشخصات محصول، پیش نویس برای بازبینی مالک (تایید نشده)
 - `PHASE1-REPORT.md`: گزارش فاز ۱
-- `src/app/provider.tsx` و `src/app/providers.tsx`: ترکیب I18nProvider (locale ثابت `fa`) و NextThemesProvider
+- `src/app/provider.tsx` و `src/app/providers.tsx`: ترکیب I18nProvider (locale ثابت `fa-u-nu-latn`) و NextThemesProvider
 - `src/app/globals.css`: توکن های Design System، بخش ۹
 - `src/components/ui`: پوشه کامپوننت های پایه (Button ،TextField ،Card ،Alert ،ThemeToggle)
 - `src/lib/db`: کلاینت Prisma
