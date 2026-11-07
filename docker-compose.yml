@@ -1,0 +1,21 @@
+# docker-compose.yml is for later use only. The PoC runs Postgres from the
+# apt service on localhost. Docker is not installed in this environment and
+# was not needed. Do not run this file expecting the PoC to work without
+# changing DATABASE_URL first.
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: raibod-postgres
+    environment:
+      POSTGRES_USER: raibod
+      POSTGRES_PASSWORD: raibod_poc_local
+      POSTGRES_DB: raibod_poc
+    ports:
+      - "5432:5432"
+    volumes:
+      - raibod-postgres-data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "shared_preload_libraries=pg_stat_statements"]
+
+volumes:
+  raibod-postgres-data:
