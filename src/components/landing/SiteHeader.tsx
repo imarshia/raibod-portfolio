@@ -5,30 +5,29 @@
 // 2026-11-09 («تاییده»); this replaces the earlier pill header.
 // Desktop (1024px and up): full-width bar, 80px content + 4px padding top
 // and bottom (88 total), sticky, content 1312px, logo right 76x56, nav
-// center (14px, gap 40), CTA 92x40 rx16 left, theme toggle 40x40 rx16.
+// center (14px, gap 40), CTA 92x40 rx16 left.
 // Mobile (below 1024px): fixed bar, 56px + 8px padding (72 total), logo
-// right 54x40, hamburger + theme toggle left; the menu is a modal panel
+// right 54x40, hamburger left; the menu is a modal panel
 // (page background, no colour change on open, bottom rx16) over a dark
 // backdrop, with body scroll locked while open.
 // Both headers hide on scroll down and show on scroll up (0.35s slide),
 // and get a 1px bottom border + faint shadow whenever scrolled
 // (scrollY > 0); clean at the very top (like negah.agency).
-// Theme: next-themes owns the theme (see providers.tsx); the toggle adds
-// the circular reveal from the toggle button via the View Transitions API,
-// with an instant fallback. The dark accent is exactly the light accent
+// Theme: light mode only. The theme toggle was removed by owner decision
+// 2026-11-09 (mode change is not logical for the landing page); the
+// Figma header never had a toggle either. The provider forces light
+// (see providers.tsx). The dark accent is exactly the light accent
 // code (#13847F, Arshia's decision); see globals.css.
 // The خدمات chevron is a static icon: no dropdown content was designed
 // in Figma, so it opens nothing. The CTA goes to /booking (locked
 // decision); there is no login button (the panel lives on
-// panel.raibod.com) and no theme toggle in the Figma header — the toggle
-// here comes from Arshia's final header design, which added it.
+// panel.raibod.com).
 
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import "./site-header.css";
 
 const NAV = [
@@ -39,48 +38,8 @@ const NAV = [
 ];
 
 /* Icons drawn from the Figma SVG path data (the sample's exact paths):
-   moon is Figma's crescent, sun is Lucide-style, chevron is the 8x4
-   Figma chevron, burger/X are the Figma menu icons. All 12x12,
-   stroke 1.33333, round caps and joins. */
-function MoonIcon() {
-  return (
-    <svg
-      className="icon-moon"
-      viewBox="-1 -1 14 14"
-      width="12"
-      height="12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.33333"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M11.991 6.3239C11.929 7.4814 11.532 8.5959 10.85 9.5329C10.168 10.4698 9.228 11.1891 8.146 11.6036C7.064 12.0182 5.884 12.1104 4.75 11.869C3.617 11.6276 2.577 11.063 1.758 10.2434C0.938 9.4238 0.373 8.3844 0.132 7.2507C-0.11 6.117 -0.018 4.9376 0.397 3.8552C0.811 2.7727 1.53 1.8334 2.467 1.1509C3.404 0.4684 4.519 0.0719 5.676 0.0093C5.946 -0.0054 6.087 0.3159 5.944 0.5446C5.465 1.3116 5.259 2.2185 5.362 3.1172C5.464 4.016 5.868 4.8535 6.507 5.4931C7.147 6.1327 7.985 6.5366 8.883 6.6389C9.782 6.7413 10.689 6.536 11.456 6.0566C11.685 5.9133 12.006 6.0539 11.991 6.3239Z" />
-    </svg>
-  );
-}
-
-function SunIcon() {
-  return (
-    <svg
-      className="icon-sun"
-      viewBox="-1 -1 14 14"
-      width="12"
-      height="12"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.33333"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="6" cy="6" r="2.8" />
-      <path d="M6 0.6V1.8M6 10.2V11.4M0.6 6H1.8M10.2 6H11.4M2.18 2.18L3.03 3.03M8.97 8.97L9.82 9.82M9.82 2.18L8.97 3.03M3.03 8.97L2.18 9.82" />
-    </svg>
-  );
-}
-
+   chevron is the 8x4 Figma chevron, burger/X are the Figma menu icons.
+   All 12x12, stroke 1.33333, round caps and joins. */
 function ChevronIcon() {
   return (
     <svg
@@ -138,21 +97,11 @@ function CloseIcon() {
 }
 
 export default function SiteHeader() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const desktopRef = useRef<HTMLElement | null>(null);
   const mobileRef = useRef<HTMLElement | null>(null);
   const backdropRef = useRef<HTMLDivElement | null>(null);
   const menuOpenRef = useRef(false);
-  const reduceMotionRef = useRef(false);
-
-  useEffect(() => {
-    setMounted(true);
-    reduceMotionRef.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-  }, []);
 
   useEffect(() => {
     menuOpenRef.current = menuOpen;
@@ -224,49 +173,6 @@ export default function SiteHeader() {
     if (open) mobileRef.current?.classList.remove("header-hidden");
   }
 
-  /* Theme toggle with the circular reveal from the toggle button.
-     next-themes owns the theme state; the class is also toggled on
-     <html> synchronously inside the transition callback so the View
-     Transition snapshot is correct (next-themes applies the same class
-     in its own effect, so the two never disagree). */
-  function toggleTheme(event: React.MouseEvent<HTMLButtonElement>) {
-    const dark = !(mounted && resolvedTheme === "dark");
-    const apply = () => {
-      document.documentElement.classList.toggle("dark", dark);
-      setTheme(dark ? "dark" : "light");
-    };
-    if (!document.startViewTransition || reduceMotionRef.current) {
-      apply();
-      return;
-    }
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
-    );
-    const transition = document.startViewTransition(apply);
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 600,
-          easing: "ease-in-out",
-          pseudoElement: "::view-transition-new(root)",
-        },
-      );
-    });
-  }
-
-  const dark = mounted && resolvedTheme === "dark";
-  const themeLabel = dark ? "تم روشن" : "تم تیره";
-
   return (
     <>
       <header ref={desktopRef} className="site-header">
@@ -295,15 +201,6 @@ export default function SiteHeader() {
           </nav>
 
           <div className="header-actions">
-            <button
-              type="button"
-              className="theme-toggle"
-              aria-label={themeLabel}
-              onClick={toggleTheme}
-            >
-              <MoonIcon />
-              <SunIcon />
-            </button>
             <Link href="/booking" className="cta">
               رزرو نوبت
             </Link>
@@ -323,15 +220,6 @@ export default function SiteHeader() {
             />
           </Link>
           <div className="mobile-actions">
-            <button
-              type="button"
-              className="theme-toggle"
-              aria-label={themeLabel}
-              onClick={toggleTheme}
-            >
-              <MoonIcon />
-              <SunIcon />
-            </button>
             <button
               type="button"
               className="menu-toggle"

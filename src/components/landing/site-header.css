@@ -3,9 +3,9 @@
    standalone ~/workspace/your_files/raibod-header-final.html.
    Desktop: full-width bar 80px + 4px padding top and bottom (88 total),
    sticky, content 1312px, logo right 76x56, nav center gap 40,
-   CTA 92x40 rx16 + theme toggle 40x40 rx16 left.
+   CTA 92x40 rx16 left.
    Mobile (below 1024px): fixed bar 56px + 8px padding top and bottom
-   (72 total) flush to the top, logo right 54x40, hamburger + toggle left
+   (72 total) flush to the top, logo right 54x40, hamburger left
    with space-between; the menu is a modal panel over a dark backdrop.
    Both headers hide on scroll down and show on scroll up (0.35s slide).
    When scrolled (scrollY > 0) both headers get a 1px bottom border plus
@@ -14,12 +14,8 @@
    geometry comes from Figma. The mobile spacer replaces the sample's
    body padding-top: it reserves the fixed bar's 72px in the landing
    flow without touching <body> (which is shared by every route).
-   Theme toggle: circular reveal expanding from the toggle button,
-   via the View Transitions API, with an instant fallback. */
-
-/* View Transitions: no default fade, the reveal is drawn by JS. */
-::view-transition-old(root),
-::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+   Light mode only: the theme toggle was removed by owner decision
+   2026-11-09, and the provider forces light (see providers.tsx). */
 
 /* ---------- shared pieces ---------- */
 .logo img { width: 76px; height: 56px; }
@@ -38,21 +34,6 @@
   transition: background-color 0.2s ease;
 }
 .cta:hover { background: var(--accent-hover); }
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 16px;
-  background: var(--surface-2);
-  color: var(--foreground);
-  transition: background-color 0.2s ease;
-}
-.theme-toggle svg { width: 12px; height: 12px; }
-.theme-toggle .icon-sun { display: none; }
-:root.dark .theme-toggle .icon-moon { display: none; }
-:root.dark .theme-toggle .icon-sun { display: block; }
 
 /* ---------- desktop header ---------- */
 .site-header { display: block; position: sticky; top: 0; z-index: 50; padding-top: 4px; padding-bottom: 4px; background: var(--background); transition: transform 0.35s ease, background-color 0.3s ease, box-shadow 0.3s ease; will-change: transform; }

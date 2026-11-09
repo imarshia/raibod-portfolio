@@ -50,22 +50,22 @@ test("booking shell states online booking opens later and shows the phone", asyn
   await expect(page.getByText("09120987790")).toBeVisible();
 });
 
-test("theme toggle switches light/dark and persists", async ({ page }) => {
+test("landing is light-only with no theme toggle", async ({ page }) => {
   await page.goto("/");
-  // System theme in the test browser is light, so the toggle offers dark.
-  const toggle = page.getByRole("button", { name: "تم تیره" });
-  await expect(toggle).toBeVisible();
-  await toggle.click();
-  await expect(page.locator("html")).toHaveClass(/dark/);
-  expect(await page.evaluate(() => localStorage.getItem("raibod-theme"))).toBe("dark");
-  await page.reload();
-  await expect(page.locator("html")).toHaveClass(/dark/);
-  await expect(
-    page.getByRole("button", { name: "تم روشن" }),
-  ).toBeVisible();
-  // Switch back so later tests start from light.
-  await page.getByRole("button", { name: "تم روشن" }).click();
+  // The theme toggle was removed by the owner (2026-11-09); the site is
+  // light-only. No toggle button exists, and <html> never gets the
+  // "dark" class. This is the LES-001 case: the test must match the
+  // current UI, not the old toggle.
+  await expect(page.getByRole("button", { name: "تم تیره" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "تم روشن" })).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/dark/);
+  // Even with a stored dark preference, the site stays light (the
+  // provider forces light; a stored value must not re-apply dark).
+  await page.evaluate(() => localStorage.setItem("raibod-theme", "dark"));
+  await page.reload();
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
+  await expect(page.getByRole("button", { name: "تم تیره" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "تم روشن" })).toHaveCount(0);
 });
 
 test("primary button radius is 12px, not the HeroUI v3 default 24px", async ({
