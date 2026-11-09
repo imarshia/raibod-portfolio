@@ -1,0 +1,213 @@
+/* EyewearScrollExperience — Raibod landing scroll experience.
+ *
+ * Architecture (three layers, one shared position variable):
+ * - Surroundings (.eyewear-surroundings): the same landscape, blurred,
+ *   filling the whole stage. Same cover geometry as the sharp layer, so
+ *   the view continues seamlessly from blurred outside to sharp inside
+ *   the lenses. (Arshia's decision 2026-11-08: blurred image around the
+ *   frame, replacing the brief's white stage. The landscape here is the
+ *   mountain-lake photo; the building photo belongs to the hero band,
+ *   per his correction 2026-11-09.)
+ * - Layer A + B (landscape + lens mask) are a single element
+ *   (.eyewear-landscape): the landscape is a stationary cover background,
+ *   and the lens mask (CSS mask-image) restricts it to the two lens
+ *   openings. Only the mask window moves; the photograph itself never
+ *   moves, so the view through the lenses changes as the frame travels.
+ * - Layer C (.eyewear-frame) is the supplied transparent PNG, above the
+ *   landscape, moved with transform only.
+ *
+ * Synchronization: the frame and the mask share one variable, --gy (the
+ * frame's top offset inside the sticky stage). The frame reads it in
+ * translateY, the mask reads it in mask-position, so the two can never
+ * drift apart. The mask is cut from the frame PNG's own alpha channel
+ * (not circles or ellipses), at the PNG's native 1864x613 resolution,
+ * so its edges follow the real frame geometry.
+ *
+ * Animation: one passive scroll listener drives a single CSS custom
+ * property (--progress, 0..1) via requestAnimationFrame. No React state
+ * updates per scroll, no re-renders, no animation library. Native CSS
+ * scroll-driven animations were not used as the sole mechanism because
+ * Safari only supports them from 26.2, so a large share of real users
+ * would get no animation at all; the rAF approach is uniformly reliable.
+ *
+ * Reduced motion: the scroll listener is skipped (see the component)
+ * and this stylesheet pins the frame at a fixed position, so the section
+ * becomes a static composition.
+ */
+
+.eyewear-section {
+  position: relative;
+  height: 250svh;
+  background: var(--background);
+}
+
+.eyewear-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  --progress: 0;
+  --frame-w: min(920px, 92vw);
+  --gy-start: 68svh;
+  --gy-travel: -115svh;
+  --gy: calc(var(--gy-start) + var(--progress) * var(--gy-travel));
+}
+
+/* Surroundings: same landscape, blurred, filling the stage. */
+.eyewear-surroundings {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("/images/eyewear-landscape-blur.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Layers A + B: stationary landscape, visible only inside the lenses. */
+.eyewear-landscape {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: url("/images/eyewear-landscape.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  -webkit-mask-image: url("/images/eyewear-lens-mask.png");
+  mask-image: url("/images/eyewear-lens-mask.png");
+  -webkit-mask-size: var(--frame-w) auto;
+  mask-size: var(--frame-w) auto;
+  -webkit-mask-position: center var(--gy);
+  mask-position: center var(--gy);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
+/* Layer C: the frame. Moves with transform only. */
+.eyewear-frame {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 3;
+  width: var(--frame-w);
+  aspect-ratio: 1864 / 613;
+  transform: translate(-50%, var(--gy));
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.eyewear-frame img {
+  -webkit-user-drag: none;
+}
+
+/* Editorial caption. Fades out early, before the frame reaches the top.
+   White text with a soft shadow: the stage is a photograph now, not white. */
+.eyewear-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 40px 24px 0;
+  text-align: center;
+  pointer-events: none;
+  opacity: calc(1 - var(--progress) * 5);
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
+}
+
+.eyewear-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #fff;
+}
+
+.eyewear-title {
+  margin-top: 8px;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.eyewear-subtitle {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.94);
+}
+
+.eyewear-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  opacity: calc(1 - var(--progress) * 5);
+}
+
+.eyewear-hint svg {
+  animation: eyewear-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes eyewear-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@media (max-width: 767px) {
+  .eyewear-section {
+    height: 200svh;
+  }
+
+  .eyewear-stage {
+    --frame-w: min(560px, 94vw);
+    --gy-start: 60svh;
+    --gy-travel: -85svh;
+  }
+
+  .eyewear-content {
+    padding-top: 28px;
+  }
+
+  .eyewear-title {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyewear-section {
+    height: auto;
+  }
+
+  .eyewear-stage {
+    position: relative;
+    --gy: 30svh;
+  }
+
+  .eyewear-content,
+  .eyewear-hint {
+    opacity: 1;
+  }
+
+  .eyewear-hint svg {
+    animation: none;
+  }
+}

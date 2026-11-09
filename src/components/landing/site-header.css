@@ -1,0 +1,203 @@
+/* src/components/landing/site-header.css — Raibod final landing header.
+   Built from Arshia's Figma SVGs (email 2026-11-09 04:08) via the approved
+   standalone ~/workspace/your_files/raibod-header-final.html.
+   Desktop: full-width bar 80px + 4px padding top and bottom (88 total),
+   sticky, content 1312px, logo right 76x56, nav center gap 40,
+   CTA 92x40 rx16 + theme toggle 40x40 rx16 left.
+   Mobile (below 1024px): fixed bar 56px + 8px padding top and bottom
+   (72 total) flush to the top, logo right 54x40, hamburger + toggle left
+   with space-between; the menu is a modal panel over a dark backdrop.
+   Both headers hide on scroll down and show on scroll up (0.35s slide).
+   When scrolled (scrollY > 0) both headers get a 1px bottom border plus
+   a faint shadow; clean at the very top (like negah.agency).
+   Colours come from the DS tokens (globals.css), never hardcoded;
+   geometry comes from Figma. The mobile spacer replaces the sample's
+   body padding-top: it reserves the fixed bar's 72px in the landing
+   flow without touching <body> (which is shared by every route).
+   Theme toggle: circular reveal expanding from the toggle button,
+   via the View Transitions API, with an instant fallback. */
+
+/* View Transitions: no default fade, the reveal is drawn by JS. */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* ---------- shared pieces ---------- */
+.logo img { width: 76px; height: 56px; }
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 17px;
+  border-radius: 16px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+.cta:hover { background: var(--accent-hover); }
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  color: var(--foreground);
+  transition: background-color 0.2s ease;
+}
+.theme-toggle svg { width: 12px; height: 12px; }
+.theme-toggle .icon-sun { display: none; }
+:root.dark .theme-toggle .icon-moon { display: none; }
+:root.dark .theme-toggle .icon-sun { display: block; }
+
+/* ---------- desktop header ---------- */
+.site-header { display: block; position: sticky; top: 0; z-index: 50; padding-top: 4px; padding-bottom: 4px; background: var(--background); transition: transform 0.35s ease, background-color 0.3s ease, box-shadow 0.3s ease; will-change: transform; }
+.site-header.header-hidden { transform: translateY(-110%); }
+.site-header.header-scrolled,
+.mobile-header.header-scrolled:not(.open) {
+  box-shadow: 0 1px 0 var(--border), 0 1px 2px rgb(0 0 0 / 0.06);
+}
+.header-inner {
+  max-width: 1312px;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 1343px) {
+  .header-inner { padding-inline: 16px; }
+}
+.header-nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.header-nav a { display: inline-flex; align-items: center; gap: 12px; }
+.header-nav a.active { color: var(--accent); }
+.header-nav a svg { width: 8px; height: 4px; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.header-actions .cta { width: 92px; padding: 0; }
+
+/* ---------- mobile header ---------- */
+.mobile-header { display: none; }
+.mobile-header-spacer { display: none; }
+@media (max-width: 1023px) {
+  .site-header { display: none; }
+  .mobile-header-spacer { display: block; height: 72px; }
+  .mobile-header {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background: var(--background);
+    transition: transform 0.35s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+  }
+  .mobile-header.header-hidden { transform: translateY(-110%); }
+  .mobile-header.open {
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
+  }
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 8px 16px;
+  }
+  .mobile-bar .logo img { width: 54px; height: 40px; }
+  .mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 16px;
+    background: var(--accent);
+    color: var(--accent-foreground);
+    transition: background-color 0.2s ease;
+  }
+  .menu-toggle svg { width: 12px; height: 12px; }
+  .menu-toggle .icon-close { display: none; }
+  .mobile-header.open .menu-toggle .icon-burger { display: none; }
+  .mobile-header.open .menu-toggle .icon-close { display: block; }
+  .mobile-menu {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+  .mobile-header.open .mobile-menu { grid-template-rows: 1fr; }
+  .mobile-menu-inner { overflow: hidden; min-height: 0; }
+  .mobile-menu nav {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 33px 0 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .mobile-menu nav a {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    height: 48px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .mobile-menu nav a.active { color: var(--accent); }
+  .mobile-menu nav a svg { width: 8px; height: 4px; flex: none; }
+  .mobile-header.open .mobile-menu nav a { opacity: 1; transform: none; }
+  .mobile-header.open .mobile-menu nav a:nth-child(1) { transition-delay: 0.05s; }
+  .mobile-header.open .mobile-menu nav a:nth-child(2) { transition-delay: 0.1s; }
+  .mobile-header.open .mobile-menu nav a:nth-child(3) { transition-delay: 0.15s; }
+  .mobile-header.open .mobile-menu nav a:nth-child(4) { transition-delay: 0.2s; }
+  .mobile-menu .cta {
+    width: calc(100% - 32px);
+    margin: 20px 16px 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease 0.25s;
+  }
+  .mobile-header.open .mobile-menu .cta { opacity: 1; }
+}
+
+/* Modal backdrop for the open mobile menu: dims the page behind it. */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgb(0 0 0 / 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.menu-backdrop.show { opacity: 1; pointer-events: auto; }
+@media (min-width: 1024px) {
+  .menu-backdrop { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .mobile-header,
+  .menu-backdrop,
+  .mobile-menu,
+  .mobile-menu nav a,
+  .mobile-menu .cta { transition: none !important; }
+}

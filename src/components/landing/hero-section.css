@@ -1,0 +1,64 @@
+/* HeroSection — Raibod landing hero photo band lens effect.
+ *
+ * The band shows the building photo blurred around the glasses and sharp
+ * only through the two lens openings. Same logic as
+ * EyewearScrollExperience, but static: no scroll animation, the glasses
+ * sit at one fixed position. The mask is cut from the frame PNG's own
+ * alpha channel (not circles or ellipses), at the PNG's native 1864x613
+ * resolution, so its edges follow the real frame geometry. The sharp
+ * layer and the blurred layer share identical cover geometry, so the view
+ * continues seamlessly from blurred outside to sharp inside the lenses.
+ * The white gradients top and bottom are kept (Figma).
+ *
+ * Geometry (desktop): band 490px tall; glasses 830px wide at top 109px,
+ * centered. Mobile (max-width 767px): band 300px; glasses 92vw at top
+ * 60px. The mask size and position follow the glasses box in both cases.
+ */
+
+.hero-band-blur {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/hero-building-blur.jpg");
+  background-size: cover;
+  /* Parallax (Arshia, 2026-11-09): the building moves behind the fixed
+     glasses as the page scrolls. --hero-progress (0..1) is written by
+     HeroSection from the section's scroll position; the background shifts
+     down by up to --hero-bg-max, so the fixed lenses reveal higher parts
+     of the building, the same direction as the scroll experience. The
+     sharp and blurred layers share this position, so they stay aligned. */
+  background-position: center calc(50% + var(--hero-progress, 0) * var(--hero-bg-max, 200px));
+  background-repeat: no-repeat;
+}
+
+.hero-band-sharp {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/hero-building.jpg");
+  background-size: cover;
+  background-position: center calc(50% + var(--hero-progress, 0) * var(--hero-bg-max, 200px));
+  background-repeat: no-repeat;
+  -webkit-mask-image: url("/images/eyewear-lens-mask.png");
+  mask-image: url("/images/eyewear-lens-mask.png");
+  -webkit-mask-size: 830px auto;
+  mask-size: 830px auto;
+  -webkit-mask-position: center 109px;
+  mask-position: center 109px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
+@media (max-width: 767px) {
+  .hero-band-sharp {
+    -webkit-mask-size: 92vw auto;
+    mask-size: 92vw auto;
+    -webkit-mask-position: center 60px;
+    mask-position: center 60px;
+  }
+  /* Mobile cover slack is only ~154px, so the parallax range is smaller. */
+  .hero-band-blur,
+  .hero-band-sharp {
+    --hero-bg-max: 60px;
+  }
+}

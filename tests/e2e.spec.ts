@@ -24,16 +24,18 @@ const SELLER_PASSWORD = testPassword("TEST_SELLER_PASSWORD");
 
 test("landing renders with hero, services, and booking CTA", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("h1")).toContainText("عینک رایبد");
-  const cta = page.getByRole("link", { name: "رزرو نوبت معاینه" });
+  await expect(page.locator("h1")).toContainText("رایبد؛ عینکی که برای چشم شماست");
+  const cta = page
+    .getByRole("region", { name: "معرفی عینک رایبد" })
+    .getByRole("link", { name: "رزرو نوبت" });
   await expect(cta).toBeVisible();
   await expect(cta).toHaveAttribute("href", "/booking");
   await expect(page.getByRole("heading", { name: "خدمات", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "معاینه چشم" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "درباره ما", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "تماس", exact: true })).toBeVisible();
-  // Jalali date in Latin digits, format YYYY/MM/DD (Design System v3.2 section 2).
-  await expect(page.getByText(/امروز به جلالی: 14\d\d\/\d\d\/\d\d/)).toBeVisible();
+  // The Jalali date line was removed from the landing page with the Figma
+  // hero (2026-11-09); Jalali display is a DateField/panel concern now.
 });
 
 test("booking shell states online booking opens later and shows the phone", async ({
@@ -53,7 +55,7 @@ test("theme toggle switches light/dark and persists", async ({ page }) => {
   await expect(toggle).toBeVisible();
   await toggle.click();
   await expect(page.locator("html")).toHaveClass(/dark/);
-  expect(await page.evaluate(() => localStorage.getItem("theme"))).toBe("dark");
+  expect(await page.evaluate(() => localStorage.getItem("raibod-theme"))).toBe("dark");
   await page.reload();
   await expect(page.locator("html")).toHaveClass(/dark/);
   await expect(
@@ -67,8 +69,10 @@ test("theme toggle switches light/dark and persists", async ({ page }) => {
 test("primary button radius is 12px, not the HeroUI v3 default 24px", async ({
   page,
 }) => {
-  await page.goto("/");
-  const cta = page.getByRole("button", { name: "رزرو نوبت معاینه" });
+  // The landing hero CTA is a link (Figma hero), not a button; the login
+  // "ورود" button is the DS primary button, so the radius is checked there.
+  await page.goto("/login");
+  const cta = page.getByRole("button", { name: "ورود" });
   const radius = await cta.evaluate(
     (el) => getComputedStyle(el).borderRadius,
   );

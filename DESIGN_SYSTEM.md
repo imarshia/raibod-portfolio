@@ -151,9 +151,9 @@ Raibod token names are kept for design reference. In code, map them to the stand
 | `--surface-2` / `--surface-secondary` | `#F5F2EF` | `#2E2E2C` | Table header, sidebar, hover |
 | `--muted` | `#787877` | `#A5A5A4` | `#787877` is forbidden in Dark (3.78:1) |
 | `--border` | `#E6E8E8` | `#3A3A38` | |
-| `--accent` | `#13847F` | `#5AA9A5` | Light accent is forbidden in Dark (3.69:1) |
-| `--accent-foreground` | `#FFFFFF` | `#083533` | White on `#5AA9A5` is forbidden (2.74:1) |
-| `--accent-hover` | `#10706C` | `#89C2BF` | In HeroUI, hover and soft are calculated with `color-mix()` from the base color. Keep the manual Raibod values in sync, or let the calculated values win and record the choice in code. |
+| `--accent` | `#13847F` | `#13847F` | Same code in Light and Dark (Arshia, 2026-11-09). Accent text on dark surface is 3.69:1: AA for large text and UI, below AA for small text. |
+| `--accent-foreground` | `#FFFFFF` | `#FFFFFF` | White on `#13847F` 4.53:1 (AA) |
+| `--accent-hover` | `#10706C` | `#10706C` | In HeroUI, hover and soft are calculated with `color-mix()` from the base color. Keep the manual Raibod values in sync, or let the calculated values win and record the choice in code. |
 | `--accent-soft` | `#E7F3F2` | `#0A4946` | Selected row, soft background |
 | `--accent-text` | `#0D5C59` | `#89C2BF` | Small accent text |
 | `--field` / `--field-background` | `#FFFFFF` | `#262624` | Input background |
@@ -173,7 +173,7 @@ Status colors are final. Use them only for status text and icons, always with a 
 ### Contrast, measured
 
 Light: ink on white 16.70:1 (AAA), white on accent 4.53:1 (AA), accent on white 4.53:1 (AA), accent on bone 4.06:1. Small text on surface-2 must use `accent-800 #0D5C59`.
-Dark: text on surface 13.59:1, muted `#A5A5A4` on `#1E1E1C` 6.77:1 (AA), accent `#5AA9A5` on `#1E1E1C` 6.09:1, `#083533` on `#5AA9A5` 4.88:1 (AA).
+Dark: text on surface 13.59:1, muted `#A5A5A4` on `#1E1E1C` 6.77:1 (AA), accent `#13847F` on `#1E1E1C` 3.69:1, white on `#13847F` 4.53:1 (AA).
 
 ### Rules
 
@@ -223,6 +223,7 @@ Fluid type for display, H1, H2: `clamp()`.
 
 - Spacing: 4px base grid, 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.
 - Layout: sidebar 264px (collapsible to 72px), topbar 64px, content max 1440px, page padding 24px (16px on mobile).
+- Landing header: full-width bar, height 80px + 4px padding top and bottom (88px total), content width 1312px, theme toggle (moon/sun, circular reveal) left of the booking CTA. All landing content sits within the 1312px width. Layout: logo right, nav centered (14px, gap 40px), booking CTA left. Sticky; hides on scroll down and shows on scroll up (both desktop and mobile). When scrolled, a 1px bottom border (`--border`) plus a faint shadow (`0 1px 2px rgb(0 0 0 / 0.06)`); clean at the very top. Mobile (below 1024px): fixed bar 56px + 8px padding (72px total), hamburger menu opens a modal panel over a dark backdrop.
 - Radius: `--radius: 12px`, small 8px, card 12px, modal 16px, pill 24px. Note: the v3 default radius is larger (button and card 24px) and values are derived from `--radius`. After build, verify the rendered button radius is 12px per this file, not 24px default v3.
 - Shadow: card `0 1px 2px rgb(0 0 0 / 0.06)`, modal `0 8px 24px rgb(0 0 0 / 0.12)`.
 - Motion: 150ms (hover), 250ms (color / theme), 350ms (modal, drawer). Easing: `cubic-bezier(.22,.61,.36,1)`.
@@ -535,8 +536,8 @@ Raibod: use Slider only for a numeric range such as a price range in reports. It
 | Surface | `#FFFFFF` | `#262624` |
 | Text | `#1E1E1C` | `#F5F2EF` |
 | Muted text | `#787877` | `#A5A5A4` |
-| Accent | `#13847F` | `#5AA9A5` |
-| Accent text | `#FFFFFF` | `#083533` |
+| Accent | `#13847F` | `#13847F` |
+| Accent text | `#FFFFFF` | `#FFFFFF` |
 
 - Toggle: Lucide `Sun` in Dark / `Moon` in Light, size 20, in the topbar.
 - Default: `prefers-color-scheme` through `next-themes` with `defaultTheme="system"` and `enableSystem`; otherwise Light. Choice persists through next-themes.
@@ -610,9 +611,9 @@ Print is always light, A4, no sidebar, no topbar, no dark mode.
   --surface-secondary: #2E2E2C;
   --muted: #A5A5A4;
   --border: #3A3A38;
-  --accent: #5AA9A5;
-  --accent-foreground: #083533;
-  --accent-hover: #89C2BF;
+  --accent: #13847F;
+  --accent-foreground: #FFFFFF;
+  --accent-hover: #10706C;
   --accent-soft: #0A4946;
   --accent-text: #89C2BF;
   --field: #262624;
@@ -691,7 +692,7 @@ Use this checklist before any UI is sent to Claude Code or merged.
 - [ ] All text sizes are from the 1.25 scale. No off-scale sizes. Rendered button radius is 12px, not the v3 default 24px.
 - [ ] UI is Persian, RTL, `lang="fa" dir="rtl"`. Dates are Jalali YYYY/MM/DD with Latin digits. Calendar uses `I18nProvider` with the Persian calendar extension and Jalali `CalendarDate` values. `firstDayOfWeek="sat"`. No fixed `weeksInMonth` for Jalali months.
 - [ ] Numbers, prices, and codes are Latin digits with `tnum`, `dir="ltr"`.
-- [ ] Light and Dark are checked for every page. Forbidden combinations are absent: `#787877` text in Dark, `#13847F` accent text in Dark, white text on `#5AA9A5` in Dark.
+- [ ] Light and Dark are checked for every page. Forbidden combinations are absent: `#787877` text in Dark.
 - [ ] One Primary per view. Focus is visible. Touch target is at least 44px.
 - [ ] Tabs use `variant="secondary"` with `Tabs.ListContainer`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel` and matching `id`. Status uses `Chip` with `variant="soft"`, not Badge. Cancel and delete use AlertDialog, not a plain Modal.
 - [ ] Drawer width is set with `className`, not with a size prop. Drawer placement is explicit. Toast root has `<Toast.Provider />` with placement `bottom` and max 3 toasts.

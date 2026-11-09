@@ -1,0 +1,142 @@
+/* HeroSkeleton: Raibod landing skeleton loader.
+ *
+ * Placeholder blocks in the shape of the landing hero, with a slow
+ * shimmer sweep. No spinner, no text. This is the site loader Arshia
+ * approved on 2026-11-09 (sample raibod-loader-skeleton.html); it
+ * replaces all earlier loader versions (glasses draw-on, Luma Spin,
+ * Spinner Loader), none of which were ever integrated. It also follows
+ * the locked DS rule: skeletons for all loading, never a blank page or
+ * a bare spinner.
+ *
+ * Geometry mirrors the hero exactly (desktop): header pill 1312x80
+ * rx 32 at top 24px; title bar 554x41; subtitle bar 689x16; two CTA
+ * pills 164x40 with gap 8; full-width band 490px. Block colour is the
+ * DS border token (var(--border)). Shimmer: a white gradient sweeping across
+ * each block, 1.8s, infinite. Mobile (max-width 640px) follows the
+ * approved sample: header 64px, title 28px, subtitle wraps to two
+ * lines, band 300px. The shimmer is disabled under
+ * prefers-reduced-motion.
+ *
+ * Atomic rule: colours come from the DS tokens in globals.css
+ * (var(--background), var(--border)), never hardcoded here, so a token
+ * change flows into this file with no edit. Geometry comes from Figma,
+ * not from tokens, so sizes stay literal.
+ */
+
+.hero-skeleton {
+  min-height: 100svh;
+  overflow-x: hidden;
+  background: var(--background);
+}
+
+.hero-skeleton-block {
+  position: relative;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.hero-skeleton-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: translateX(-100%);
+  animation: hero-skeleton-shimmer 1.8s infinite;
+}
+
+@keyframes hero-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+.hero-skeleton-header {
+  width: 1312px;
+  max-width: calc(100% - 32px);
+  height: 80px;
+  margin: 24px auto 0;
+  border-radius: 32px;
+}
+
+.hero-skeleton-title {
+  width: 554px;
+  max-width: calc(100% - 32px);
+  height: 41px;
+  margin: 82px auto 0;
+  border-radius: 8px;
+}
+
+.hero-skeleton-subtitle {
+  width: 689px;
+  max-width: calc(100% - 32px);
+  height: 16px;
+  margin: 12px auto 0;
+  border-radius: 6px;
+}
+
+.hero-skeleton-subtitle-2 {
+  display: none;
+}
+
+.hero-skeleton-ctas {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 33px;
+}
+
+.hero-skeleton-cta {
+  width: 164px;
+  height: 40px;
+  border-radius: 16px;
+}
+
+.hero-skeleton-band {
+  width: 100%;
+  height: 490px;
+  margin-top: 66px;
+  border-radius: 0;
+}
+
+@media (max-width: 640px) {
+  .hero-skeleton-header {
+    height: 64px;
+    border-radius: 16px;
+  }
+
+  .hero-skeleton-title {
+    width: min(391px, 92vw);
+    height: 28px;
+    margin-top: 48px;
+  }
+
+  .hero-skeleton-subtitle {
+    width: 92vw;
+    height: 15px;
+  }
+
+  .hero-skeleton-subtitle-2 {
+    display: block;
+    width: 55vw;
+    height: 15px;
+    margin: 10px auto 0;
+    border-radius: 6px;
+  }
+
+  .hero-skeleton-ctas {
+    margin-top: 24px;
+  }
+
+  .hero-skeleton-cta {
+    width: 164px;
+  }
+
+  .hero-skeleton-band {
+    height: 300px;
+    margin-top: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-skeleton-block::after {
+    animation: none;
+  }
+}

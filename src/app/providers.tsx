@@ -20,6 +20,7 @@ export function Providers({ children }: { children: ReactNode }) {
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
+      storageKey="raibod-theme"
     >
       <I18nProvider>
         <Toast.Provider />
