@@ -101,6 +101,35 @@ body {
   border-radius: var(--radius);
 }
 
+/* Owner decision 2026-11-09: form fields use a 16px (1rem) radius.
+   HeroUI v3 fields default to rounded-field, which computes to 18px on
+   the 36px input, effectively pill-shaped. The owner does not want the
+   pill look. This override forces 16px on Input and TextArea only; the
+   DS --radius token (12px) and the .button override above are unchanged.
+   The border is forced here too: HeroUI v3 ships fields with no border
+   (0px, transparent) and only a shadow hairline, but the DS (section 5)
+   specifies a mist border, so the fields get a 1px var(--border) border.
+   Background, hover, focus, and the 2px accent focus ring already come
+   from the DS tokens, so they are not overridden. The 1px border adds
+   2px to the height, so the vertical padding is reduced by 1px each
+   side (7px instead of HeroUI py-2 8px) to keep the total height at
+   the pre-change 36px. */
+.input,
+.textarea {
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: var(--border);
+  padding-block: 7px;
+}
+
+/* DS section 5: form labels are 14px / 600 above the field. HeroUI v3
+   renders .label with font-medium (500). This override forces 600 on
+   labels. The 14px size and the foreground color already match the DS,
+   so they are not overridden. */
+.label {
+  font-weight: 600;
+}
+
 @media print {
   body {
     background: white !important;
