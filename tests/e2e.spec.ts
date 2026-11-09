@@ -22,14 +22,12 @@ function testPassword(name: "TEST_ADMIN_PASSWORD" | "TEST_SELLER_PASSWORD"): str
 const ADMIN_PASSWORD = testPassword("TEST_ADMIN_PASSWORD");
 const SELLER_PASSWORD = testPassword("TEST_SELLER_PASSWORD");
 
-test("landing renders with hero, services, and booking CTA", async ({ page }) => {
+test("landing renders without hero, with services and footer", async ({ page }) => {
   await page.goto("/");
-  await expect(page.locator("h1")).toContainText("رایبد؛ عینکی که برای چشم شماست");
-  const cta = page
-    .getByRole("region", { name: "معرفی عینک رایبد" })
-    .getByRole("link", { name: "رزرو نوبت" });
-  await expect(cta).toBeVisible();
-  await expect(cta).toHaveAttribute("href", "/booking");
+  // The hero was removed by the owner (2026-11-09, to be redesigned
+  // from scratch); no h1 is on the page. This is the LES-001 case:
+  // the test must match the current UI, not the old hero.
+  await expect(page.locator("h1")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "خدمات", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "معاینه چشم" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "درباره ما", exact: true })).toBeVisible();
@@ -38,8 +36,8 @@ test("landing renders with hero, services, and booking CTA", async ({ page }) =>
   await expect(
     page.locator("main").getByRole("heading", { name: "تماس", exact: true }),
   ).toBeVisible();
-  // The Jalali date line was removed from the landing page with the Figma
-  // hero (2026-11-09); Jalali display is a DateField/panel concern now.
+  // The footer is final and renders at the bottom of the page.
+  await expect(page.locator("footer.site-footer")).toBeVisible();
 });
 
 test("booking shell states online booking opens later and shows the phone", async ({

@@ -1,14 +1,16 @@
 // src/app/(public)/page.tsx: Raybod public landing (Phase 1).
-// Header, hero and footer are FINAL, built exactly from Arshia's Figma
-// frames: SiteHeader (final header), HeroSection (title, subtitle, CTAs,
-// photo band with glasses), the scroll experience, and SiteFooter (footer
-// SVGs, desktop 1440x405, mobile 390x1053, received 2026-11-09).
+// Header and footer are FINAL, built exactly from Arshia's Figma
+// frames: SiteHeader (final header) and SiteFooter (footer SVGs,
+// desktop 1440x405, mobile 390x1053, received 2026-11-09).
+// The hero and the scroll experience were REMOVED by the owner
+// (2026-11-09, "remove the entire frame thing"); the hero will be
+// redesigned from scratch. HeroSection.tsx, hero-section.css,
+// EyewearScrollExperience.tsx and eyewear-scroll-experience.css
+// stay in the repo, unused, for reference.
 // Services, about and contact below are still PROVISIONAL copy until
 // Arshia designs them in Figma.
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import EyewearScrollExperience from "@/components/landing/EyewearScrollExperience";
-import HeroSection from "@/components/landing/HeroSection";
 import SiteFooter from "@/components/landing/SiteFooter";
 import SiteHeader from "@/components/landing/SiteHeader";
 
@@ -34,10 +36,6 @@ export default function HomePage() {
       className="min-h-screen overflow-x-clip bg-background text-foreground"
     >
       <SiteHeader />
-
-      <HeroSection />
-
-      <EyewearScrollExperience />
 
       <main className="mx-auto max-w-5xl px-4">
         <section id="services" className="py-8">
