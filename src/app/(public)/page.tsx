@@ -1,14 +1,15 @@
 // src/app/(public)/page.tsx: Raybod public landing (Phase 1).
-// Header + hero are FINAL, built exactly from Arshia's Figma hero frame
-// (raibod-hero-section.svg, 1440x884, received 2026-11-09):
-// SiteHeader (the final header: full-width bar + theme toggle + mobile menu) and HeroSection (title, subtitle,
-// CTAs, photo band with glasses). The scroll experience follows the hero.
+// Header, hero and footer are FINAL, built exactly from Arshia's Figma
+// frames: SiteHeader (final header), HeroSection (title, subtitle, CTAs,
+// photo band with glasses), the scroll experience, and SiteFooter (footer
+// SVGs, desktop 1440x405, mobile 390x1053, received 2026-11-09).
 // Services, about and contact below are still PROVISIONAL copy until
 // Arshia designs them in Figma.
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import EyewearScrollExperience from "@/components/landing/EyewearScrollExperience";
 import HeroSection from "@/components/landing/HeroSection";
+import SiteFooter from "@/components/landing/SiteFooter";
 import SiteHeader from "@/components/landing/SiteHeader";
 
 const SERVICES = [
@@ -71,12 +72,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="border-t border-border bg-surface">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 text-caption text-muted">
-          <span>عینک رایبد</span>
-          <span dir="ltr">09120987790</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

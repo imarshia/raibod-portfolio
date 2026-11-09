@@ -1,0 +1,182 @@
+/* site-footer.css - Raibod landing footer styles, ported from the approved
+   standalone ~/workspace/your_files/raibod-footer-preview.html (built from
+   Arshia's Figma footer SVGs, email 2026-11-09 13:52: desktop 1440x405,
+   mobile 390x1053). Full-width footer, inner content 1312px (64px margins
+   at 1440). Colours come from the DS tokens in globals.css.
+   - Body text is #333333 in light mode and #D8D8D7 in dark mode, matching
+     Figma exactly; this is the documented exception EXC-002 (same value
+     as the hero subtitle, EXC-001). Font sizes use the DS type classes
+     (text-body, text-body-sm, text-caption) on the elements in
+     SiteFooter.tsx, not raw sizes here (STD-004).
+   - The CTA and the social box radius is 16px (Figma rx16), matching the
+     header CTA (site-header.css .cta, also 16px). STD-006 (12px) covers
+     the HeroUI .button override, not landing CTA links.
+   - Social box padding is 0 8px on both sides. The preview had 16px on
+     the left, which renders the icons at x80 (desktop) instead of
+     Figma's x72 (and x27 instead of x19 on mobile); 8px matches Figma
+     on both viewports (STD-010).
+   - The vertical dividers are absolutely positioned inside .footer-inner
+     (Figma x557.25 and x923.75, y65-309). They are valid only at the
+     1440 layout; on narrower desktop widths (1024-1343px) they may not
+     align with the compressed flex columns (same limitation as the
+     preview; the repo implementation will need a responsive approach
+     if that range is ever verified against Figma).
+   - The mobile contact section is max-width 300px and centered, exactly
+     like the about text (owner correction, 2026-11-09); the social box
+     and CTA inside it become 300px wide and centered too. */
+
+.site-footer {
+  background: var(--background);
+  border-top: 1px solid var(--border);
+  transition: background-color 0.3s ease;
+}
+.footer-inner {
+  position: relative;
+  max-width: 1312px;
+  margin: 0 auto;
+  padding: 64px 0 22px;
+}
+/* Vertical dividers between the desktop columns (Figma x557.25 and
+   x923.75, y65-309, 244px tall). Positions are relative to .footer-inner,
+   whose left edge is 64px inside the 1440 canvas, so the offsets are
+   the Figma x minus 64. */
+.footer-divider-v {
+  position: absolute;
+  top: 64px;
+  height: 244px;
+  width: 1px;
+  background: var(--border);
+}
+.footer-divider-v1 { left: 493.25px; }
+.footer-divider-v2 { left: 859.75px; }
+.footer-columns {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.footer-brand { width: 368px; flex: none; }
+.footer-logo img { width: 108px; height: 80px; }
+.footer-about {
+  margin-top: 30px;
+  max-width: 300px;
+  text-align: justify;
+  line-height: 1.8;
+  color: #333333;
+}
+:root.dark .footer-about { color: #D8D8D7; }
+.footer-nav { width: 156px; flex: none; margin-top: 5px; }
+.footer-nav h3,
+.footer-contact h3 {
+  font-weight: 700;
+  line-height: 1.8;
+  color: var(--foreground);
+}
+.footer-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 16px;
+}
+.footer-nav-links a { line-height: 1.8; color: #333333; }
+:root.dark .footer-nav-links a { color: #D8D8D7; }
+.footer-nav-links a:hover { color: var(--accent); }
+.footer-contact { width: 368px; flex: none; margin-top: 5px; }
+.footer-contact-text {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 16px;
+}
+.footer-contact-text p { line-height: 1.8; color: #333333; }
+:root.dark .footer-contact-text p { color: #D8D8D7; }
+.footer-contact-text a { color: inherit; }
+.footer-phone-sep { color: var(--accent); }
+.footer-contact-text a:hover { color: var(--accent); }
+.footer-social {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 8px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  margin-top: 19px;
+}
+.footer-social-label { line-height: 1.8; color: #333333; }
+:root.dark .footer-social-label { color: #D8D8D7; }
+.footer-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  direction: ltr;
+}
+.footer-social-icons a,
+.footer-social-icons span {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  color: var(--accent);
+}
+.footer-social-icons svg { width: 32px; height: 32px; display: block; }
+/* Footer CTA: a landing CTA link (like the header .cta), not a HeroUI
+   button, so it carries its own styles here instead of importing the
+   header stylesheet. Radius 16px is the Figma value (see the header
+   comment above). */
+.footer-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  padding: 0 17px;
+  border-radius: 16px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+  margin-top: 19px;
+}
+.footer-cta:hover { background: var(--accent-hover); }
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 28px;
+}
+.footer-bottom p {
+  text-align: center;
+  line-height: 1.8;
+  color: var(--muted);
+}
+/* Mobile dividers are hidden on desktop; the second one gets a smaller
+   top margin (37px) because the nav section renders taller than Figma
+   by that amount, and the contact margin below compensates so the
+   contact heading stays in place (same as the preview). */
+.footer-m-divider { display: none; }
+.footer-m-divider.footer-m-divider-2 { margin-top: 37px; }
+
+@media (max-width: 1343px) {
+  .footer-inner { padding-inline: 16px; }
+}
+@media (max-width: 1023px) {
+  .footer-divider-v { display: none; }
+  .footer-m-divider {
+    display: block;
+    width: 244px;
+    height: 1px;
+    margin: 48px auto 0;
+    background: var(--border);
+    flex: none;
+  }
+  .footer-inner { padding: 64px 11px 22px; max-width: none; }
+  .footer-columns { flex-direction: column; align-items: stretch; }
+  .footer-brand { width: 100%; text-align: center; }
+  .footer-logo img { margin: 0 auto; }
+  .footer-about { max-width: 300px; margin: 30px auto 0; }
+  .footer-nav { width: 100%; margin-top: 44px; text-align: center; }
+  .footer-nav-links { align-items: center; }
+  .footer-contact { width: 100%; max-width: 300px; margin: 42px auto 0; }
+  .footer-contact h3 { text-align: right; }
+  .footer-contact-text p { text-align: right; }
+  .footer-bottom { margin-top: 25px; }
+}

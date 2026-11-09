@@ -33,7 +33,11 @@ test("landing renders with hero, services, and booking CTA", async ({ page }) =>
   await expect(page.getByRole("heading", { name: "خدمات", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "معاینه چشم" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "درباره ما", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "تماس", exact: true })).toBeVisible();
+  // Scoped to <main>: the footer also has a "تماس" heading (h3), so an
+  // unscoped lookup would match two headings and fail strict mode.
+  await expect(
+    page.locator("main").getByRole("heading", { name: "تماس", exact: true }),
+  ).toBeVisible();
   // The Jalali date line was removed from the landing page with the Figma
   // hero (2026-11-09); Jalali display is a DateField/panel concern now.
 });
@@ -123,4 +127,95 @@ test("seller login does not see the admin section", async ({ page }) => {
   await expect(page).toHaveURL(/\/panel$/);
   await expect(page.getByTestId("admin-section")).toHaveCount(0);
   await expect(page.getByTestId("non-admin-note")).toBeVisible();
+});
+
+test("mobile menu close keeps the scrolled header state (LES-002)", async ({
+  page,
+}) => {
+  // LES-002: closing the mobile menu while scrolled must not wipe the
+  // scroll-managed classes. The menu open class was once applied through
+  // the className prop, so a React re-render rewrote the class attribute
+  // and removed header-scrolled; the header then showed clean until the
+  // next scroll. The fix toggles open/show directly on the DOM nodes and
+  // keeps the className prop constant, so React never rewrites it.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  // Wait for hydration before scrolling: the scroll listener in
+  // SiteHeader mounts on hydration and reads the current scrollY as
+  // its starting point. Scrolling before it mounts makes the listener
+  // treat the scrolled position as its start, so it never adds
+  // header-hidden and the scroll direction is misread.
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(500);
+  const mobileHeader = page.locator("#mobileHeader");
+  const menuToggle = page.getByRole("button", { name: "منو" });
+  // Scroll down, then up, so the header is shown and scrolled. Each
+  // scroll is confirmed before the next, so the scroll listener sees
+  // the direction change in separate animation frames.
+  await page.evaluate(() => window.scrollTo(0, 500));
+  await expect(mobileHeader).toHaveClass(/\bheader-hidden\b/);
+  await page.evaluate(() => window.scrollTo(0, 200));
+  await expect(mobileHeader).toHaveClass(/\bheader-scrolled\b/);
+  await expect(mobileHeader).not.toHaveClass(/\bheader-hidden\b/);
+  // Baseline: the scrolled shadow is present before the menu opens.
+  await expect(mobileHeader).not.toHaveCSS("box-shadow", "none");
+  // Open the menu. The scrolled class must survive the re-render.
+  await menuToggle.click();
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(mobileHeader).toHaveClass(/\bopen\b/);
+  await expect(mobileHeader).toHaveClass(/\bheader-scrolled\b/);
+  // Close the menu. Without scrolling again, the scrolled state must
+  // still be there: the class is present and the scrolled shadow is back.
+  await menuToggle.click();
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(mobileHeader).not.toHaveClass(/\bopen\b/);
+  await expect(mobileHeader).toHaveClass(/\bheader-scrolled\b/);
+  // Let the 0.3s shadow transition finish, then check the visible outcome.
+  await page.waitForTimeout(500);
+  await expect(mobileHeader).not.toHaveCSS("box-shadow", "none");
+});
+
+test("footer renders with copyright, contact, and Instagram link", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const footer = page.locator("footer.site-footer");
+  await expect(footer).toBeVisible();
+  await expect(
+    footer.getByText("© ۱۴۰۴ عینک رایبد. تمامی حقوق محفوظ است."),
+  ).toBeVisible();
+  await expect(
+    footer.getByText("آدرس: خیابان طالقانی، چهارراه امیریه، بجنورد."),
+  ).toBeVisible();
+  await expect(
+    footer.getByRole("link", { name: "058-3223-8568" }),
+  ).toHaveAttribute("href", "tel:+985832238568");
+  await expect(
+    footer.getByRole("link", { name: "0912-098-7790" }),
+  ).toHaveAttribute("href", "tel:+989120987790");
+  const instagram = footer.getByRole("link", {
+    name: "اینستاگرام عینک رایبد",
+  });
+  await expect(instagram).toBeVisible();
+  await expect(instagram).toHaveAttribute(
+    "href",
+    "https://www.instagram.com/raibodoptic.ir",
+  );
+  await expect(footer.getByRole("link", { name: "رزرو نوبت" })).toHaveAttribute(
+    "href",
+    "/booking",
+  );
+});
+
+test("footer is visible on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const footer = page.locator("footer.site-footer");
+  await expect(footer).toBeVisible();
+  await expect(
+    footer.getByText("© ۱۴۰۴ عینک رایبد. تمامی حقوق محفوظ است."),
+  ).toBeVisible();
+  await expect(
+    footer.getByRole("link", { name: "اینستاگرام عینک رایبد" }),
+  ).toBeVisible();
 });
