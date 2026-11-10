@@ -108,6 +108,30 @@ test("wrong password shows a Persian error", async ({ page }) => {
   await expect(page.getByText("موبایل یا رمز درست نیست.")).toBeVisible();
 });
 
+test("database outage shows the temporary-error message (Q-02)", async ({
+  page,
+}) => {
+  // Q-02: a database outage must return 503 and show a distinct
+  // message, not "wrong password". The login API wraps its Prisma
+  // calls in try/catch and returns 503 with error "server_error";
+  // the page shows the approved temporary-error message for 503.
+  // This test runs against the no-database test server, so the API
+  // returns 503. It fails on the old code (which showed the
+  // wrong-password message for any non-OK response except 429)
+  // and passes after the fix. With a live database, the 503 path
+  // is verified by stopping the database (Alex's Q-02
+  // verification: stop the DB, attempt a login, assert 503 and
+  // the distinct message).
+  await page.goto("/login");
+  await page.getByLabel("موبایل").fill("09120000000");
+  await page.getByLabel("رمز عبور").fill("wrong-password");
+  await page.getByRole("button", { name: "ورود" }).click();
+  await expect(
+    page.getByText("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید."),
+  ).toBeVisible();
+  await expect(page.getByText("موبایل یا رمز درست نیست.")).toHaveCount(0);
+});
+
 test("admin login sees the admin section", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("موبایل").fill("09120000000");

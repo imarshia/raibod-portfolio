@@ -43,6 +43,12 @@ export default function LoginPage() {
         );
         return;
       }
+      if (res.status === 503) {
+        // Q-02: a database or server failure is not a wrong password.
+        // The message is the owner-approved text, exactly as given.
+        setError("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید.");
+        return;
+      }
       setError("موبایل یا رمز درست نیست.");
       return;
     }
