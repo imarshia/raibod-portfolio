@@ -68,17 +68,64 @@ test("landing is light-only with no theme toggle", async ({ page }) => {
   await expect(page.getByRole("button", { name: "تم روشن" })).toHaveCount(0);
 });
 
-test("primary button radius is 12px, not the HeroUI v3 default 24px", async ({
+test("login field radius is 12px per the Design System", async ({ page }) => {
+  // The DS field radius changed 2026-11-10 from 16px to 12px (owner
+  // decision: Figma shows 12px and the design takes priority). The
+  // login fields get the radius from the global .input override, not
+  // from a login-only radius class.
+  await page.goto("/login");
+  const radius = await page
+    .getByLabel("شماره موبایل")
+    .evaluate((el) => getComputedStyle(el).borderRadius);
+  expect(radius).toBe("12px");
+});
+
+test("login page does not scroll on desktop or mobile, even with an error", async ({
   page,
 }) => {
-  // The landing hero CTA is a link (Figma hero), not a button; the login
-  // "ورود" button is the DS primary button, so the radius is checked there.
+  // The owner requires the login page to be exactly one viewport tall
+  // with no vertical scroll, on desktop and on mobile. The card is
+  // centered, so it grows symmetrically when an error appears.
+  for (const size of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(size);
+    await page.goto("/login");
+    await page.waitForLoadState("networkidle");
+    const noScroll = await page.evaluate(() => {
+      const el = document.documentElement;
+      return el.scrollHeight === window.innerHeight;
+    });
+    expect(noScroll).toBe(true);
+    // Show a per-field error: the card grows, but the page must
+    // still not scroll.
+    await page.getByLabel("شماره موبایل").fill("123");
+    await page.getByLabel("رمز عبور").fill("something");
+    await page.getByRole("button", { name: "وارد شوید" }).click();
+    await expect(page.getByText("شماره موبایل نادرست است")).toBeVisible();
+    const noScrollWithError = await page.evaluate(() => {
+      const el = document.documentElement;
+      return el.scrollHeight === window.innerHeight;
+    });
+    expect(noScrollWithError).toBe(true);
+  }
+});
+test("login button radius is 16px per Figma, not the DS 12px", async ({
+  page,
+}) => {
+  // The Figma login button is 16px radius. This overrides STD-006
+  // (button radius 12px) for this button only; the DS 12px rule still
+  // applies to other buttons. Recorded as an open item (see the task
+  // report). The button is a native button, not the HeroUI Button:
+  // the global .button override forces 12px on HeroUI buttons, so the
+  // 16px Figma radius needs a native button.
   await page.goto("/login");
-  const cta = page.getByRole("button", { name: "ورود" });
+  const cta = page.getByRole("button", { name: "وارد شوید" });
   const radius = await cta.evaluate(
     (el) => getComputedStyle(el).borderRadius,
   );
-  expect(radius).toBe("12px");
+  expect(radius).toBe("16px");
 });
 
 test("demo route returns 404", async ({ page }) => {
@@ -89,9 +136,46 @@ test("demo route returns 404", async ({ page }) => {
 test("login page renders", async ({ page }) => {
   await page.goto("/login");
   await expect(page.getByRole("heading", { name: "ورود به پنل" })).toBeVisible();
-  await expect(page.getByLabel("موبایل")).toBeVisible();
+  await expect(page.getByLabel("شماره موبایل")).toBeVisible();
   await expect(page.getByLabel("رمز عبور")).toBeVisible();
-  await expect(page.getByRole("button", { name: "ورود" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "وارد شوید" })).toBeVisible();
+  // The owner signature links Arshiasdrl to his site.
+  await expect(page.getByRole("link", { name: "Arshiasdrl" })).toHaveAttribute(
+    "href",
+    "https://arshiasdrl.ir",
+  );
+});
+
+test("invalid mobile shows a per-field error without calling the API", async ({
+  page,
+}) => {
+  // Client-side validation: the mobile must be 11 digits starting with
+  // 09. An invalid mobile shows "شماره موبایل نادرست است" under the
+  // mobile field and the form is not submitted. This runs without a
+  // database: no fetch happens, so no 503 appears.
+  await page.goto("/login");
+  await page.getByLabel("شماره موبایل").fill("123");
+  await page.getByLabel("رمز عبور").fill("something");
+  await page.getByRole("button", { name: "وارد شوید" }).click();
+  await expect(page.getByText("شماره موبایل نادرست است")).toBeVisible();
+  await expect(
+    page.getByText("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید."),
+  ).toHaveCount(0);
+});
+
+test("empty password shows a per-field error without calling the API", async ({
+  page,
+}) => {
+  // Client-side validation: the password must not be empty. An empty
+  // password shows "رمز عبور نادرست است" under the password field and
+  // the form is not submitted. This runs without a database.
+  await page.goto("/login");
+  await page.getByLabel("شماره موبایل").fill("09120000000");
+  await page.getByRole("button", { name: "وارد شوید" }).click();
+  await expect(page.getByText("رمز عبور نادرست است")).toBeVisible();
+  await expect(
+    page.getByText("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید."),
+  ).toHaveCount(0);
 });
 
 test("unauthenticated panel redirects to login", async ({ page }) => {
@@ -102,9 +186,9 @@ test("unauthenticated panel redirects to login", async ({ page }) => {
 
 test("wrong password shows a Persian error", async ({ page }) => {
   await page.goto("/login");
-  await page.getByLabel("موبایل").fill("09120000000");
+  await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByLabel("رمز عبور").fill("wrong-password");
-  await page.getByRole("button", { name: "ورود" }).click();
+  await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page.getByText("موبایل یا رمز درست نیست.")).toBeVisible();
 });
 
@@ -123,9 +207,9 @@ test("database outage shows the temporary-error message (Q-02)", async ({
   // verification: stop the DB, attempt a login, assert 503 and
   // the distinct message).
   await page.goto("/login");
-  await page.getByLabel("موبایل").fill("09120000000");
+  await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByLabel("رمز عبور").fill("wrong-password");
-  await page.getByRole("button", { name: "ورود" }).click();
+  await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(
     page.getByText("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید."),
   ).toBeVisible();
@@ -134,18 +218,18 @@ test("database outage shows the temporary-error message (Q-02)", async ({
 
 test("admin login sees the admin section", async ({ page }) => {
   await page.goto("/login");
-  await page.getByLabel("موبایل").fill("09120000000");
+  await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
-  await page.getByRole("button", { name: "ورود" }).click();
+  await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/panel$/);
   await expect(page.getByTestId("admin-section")).toBeVisible();
 });
 
 test("seller login does not see the admin section", async ({ page }) => {
   await page.goto("/login");
-  await page.getByLabel("موبایل").fill("09120000001");
+  await page.getByLabel("شماره موبایل").fill("09120000001");
   await page.getByLabel("رمز عبور").fill(SELLER_PASSWORD);
-  await page.getByRole("button", { name: "ورود" }).click();
+  await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/panel$/);
   await expect(page.getByTestId("admin-section")).toHaveCount(0);
   await expect(page.getByTestId("non-admin-note")).toBeVisible();

@@ -1,3 +1,6 @@
+/* Inter is used only for the login-page signature (owner spec: Inter 300,
+   10px). It is not a Design System font; Vazirmatn stays the system font. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap");
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "@fontsource/vazirmatn/400.css";
@@ -101,11 +104,14 @@ body {
   border-radius: var(--radius);
 }
 
-/* Owner decision 2026-11-09: form fields use a 16px (1rem) radius.
-   HeroUI v3 fields default to rounded-field, which computes to 18px on
-   the 36px input, effectively pill-shaped. The owner does not want the
-   pill look. This override forces 16px on Input and TextArea only; the
-   DS --radius token (12px) and the .button override above are unchanged.
+/* Owner decision 2026-11-10: form fields use a 12px (0.75rem) radius.
+   This supersedes the 2026-11-09 16px decision: the owner said the
+   Figma design shows 12px and the design takes priority, so the DS
+   field radius is now 12px. HeroUI v3 fields default to rounded-field,
+   which computes to 18px on the 36px input, effectively pill-shaped.
+   The owner does not want the pill look. This override forces 12px on
+   Input and TextArea only; the DS --radius token (12px) and the .button
+   override above are unchanged.
    The border is forced here too: HeroUI v3 ships fields with no border
    (0px, transparent) and only a shadow hairline, but the DS (section 5)
    specifies a mist border, so the fields get a 1px var(--border) border.
@@ -116,7 +122,7 @@ body {
    the pre-change 36px. */
 .input,
 .textarea {
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   border-width: 1px;
   border-color: var(--border);
   padding-block: 7px;

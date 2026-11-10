@@ -224,11 +224,11 @@ Fluid type for display, H1, H2: `clamp()`.
 - Spacing: 4px base grid, 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.
 - Layout: sidebar 264px (collapsible to 72px), topbar 64px, content max 1440px, page padding 24px (16px on mobile).
 - Landing header: full-width bar, height 80px + 4px padding top and bottom (88px total), content width 1312px, theme toggle (moon/sun, circular reveal) left of the booking CTA. All landing content sits within the 1312px width. Layout: logo right, nav centered (14px, gap 40px), booking CTA left. Sticky; hides on scroll down and shows on scroll up (both desktop and mobile). When scrolled, a 1px bottom border (`--border`) plus a faint shadow (`0 1px 2px rgb(0 0 0 / 0.06)`); clean at the very top. Mobile (below 1024px): fixed bar 56px + 8px padding (72px total), hamburger menu opens a modal panel over a dark backdrop.
-- Radius: `--radius: 12px`, small 8px, card 12px, modal 16px, pill 24px. Note: the v3 default radius is larger (button and card 24px) and values are derived from `--radius`. After build, verify the rendered button radius is 12px per this file, not 24px default v3.
+- Radius: `--radius: 12px`, small 8px, card 12px, field 12px, modal 16px, pill 24px. Note: the v3 default radius is larger (button and card 24px) and values are derived from `--radius`. After build, verify the rendered button radius is 12px per this file, not 24px default v3.
 - Shadow: card `0 1px 2px rgb(0 0 0 / 0.06)`, modal `0 8px 24px rgb(0 0 0 / 0.12)`.
 - Motion: 150ms (hover), 250ms (color / theme), 350ms (modal, drawer). Easing: `cubic-bezier(.22,.61,.36,1)`.
 - Table: row height 44px, body text 14px, header in `surface-2`, row hover in `surface-2`, selected row in `accent-soft`.
-- Form: label 14px / 600 above the field, field height 44px, border `mist`, focus ring 2px `accent`, error text 12px in `danger`.
+- Form: label 14px / 600 above the field, field height 44px, field radius 12px, border `mist`, focus ring 2px `accent`, error text 12px in `danger`. (Field radius changed 2026-11-10 from 16px to 12px by owner decision: the Figma design shows 12px and the design takes priority.)
 - Reduced motion: HeroUI animations are disabled with `data-reduce-motion="true"` on `html`. Respect `prefers-reduced-motion` with this attribute.
 - Scrollbar: use tokens `--scrollbar-thumb` and `--scrollbar-track` and attribute `data-scrollbar` with values `thin`, `default`, `none` for horizontal scroll tables. Do not write custom webkit scrollbar styles.
 
