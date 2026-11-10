@@ -43,7 +43,7 @@ export function Providers({ children }: { children: ReactNode }) {
       storageKey="raibod-theme"
     >
       <I18nProvider>
-        <Toast.Provider placement={isMobile ? "top" : "bottom end"} />
+        <Toast.Provider placement={isMobile ? "top" : "bottom start"} />
         {children}
       </I18nProvider>
     </NextThemesProvider>

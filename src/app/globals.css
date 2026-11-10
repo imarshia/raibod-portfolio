@@ -147,6 +147,14 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
+/* Owner direction 2026-11-10: the HeroUI Toast border radius is 12px.
+   HeroUI v3 toasts default to a larger radius; this override forces
+   12px on the toast container. Unlayered rules beat HeroUI's layered
+   component styles, so a plain rule is enough. */
+.toast {
+  border-radius: 12px;
+}
+
 /* DS section 5: form labels are 14px / 600 above the field. HeroUI v3
    renders .label with font-medium (500). This override forces 600 on
    labels. The 14px size and the foreground color already match the DS,
