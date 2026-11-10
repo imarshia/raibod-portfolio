@@ -12,8 +12,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CircleAlert, Eye, EyeOff } from "lucide-react";
+import { toast } from "@heroui/react";
 import { FormError } from "@/components/ui/alert";
-import { LoginToast } from "@/components/ui/login-toast";
 
 const MOBILE_RE = /^09\d{9}$/;
 
@@ -26,7 +26,6 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   function onMobileChange(value: string) {
     setMobile(value);
@@ -88,10 +87,12 @@ export default function LoginPage() {
       setError("موبایل یا رمز درست نیست.");
       return;
     }
-    // Show the success toast, then go to the panel. The toast is
-    // visible for 1.5s; its own 4000ms auto-dismiss covers the case
-    // where the redirect does not happen.
-    setShowToast(true);
+    // Show the standard HeroUI success toast, then go to the panel.
+    // The toast auto-dismisses after 4000ms (DS); the redirect happens
+    // after 1.5s so the user is not left waiting on the login page.
+    // The Provider placement is responsive (bottom-right desktop,
+    // top-center mobile), set in src/app/providers.tsx.
+    toast.success("ورود با موفقیت انجام شد.");
     setTimeout(() => {
       router.push("/panel");
       router.refresh();
@@ -196,7 +197,6 @@ export default function LoginPage() {
         </a>{" "}
         | Thoughtfully designed. Intentionally built.
       </p>
-      <LoginToast message="ورود با موفقیت انجام شد." show={showToast} />
     </main>
   );
 }
