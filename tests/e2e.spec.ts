@@ -167,12 +167,28 @@ test("empty password shows a per-field error without calling the API", async ({
   page,
 }) => {
   // Client-side validation: the password must not be empty. An empty
-  // password shows "رمز عبور نادرست است" under the password field and
-  // the form is not submitted. This runs without a database.
+  // password shows "پر کردن این فیلد الزامی هست" under the password
+  // field and the form is not submitted. This runs without a database.
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByRole("button", { name: "وارد شوید" }).click();
-  await expect(page.getByText("رمز عبور نادرست است")).toBeVisible();
+  await expect(page.getByText("پر کردن این فیلد الزامی هست")).toBeVisible();
+  await expect(
+    page.getByText("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید."),
+  ).toHaveCount(0);
+});
+
+test("empty mobile shows the required-field error without calling the API", async ({
+  page,
+}) => {
+  // Client-side validation: an empty mobile shows
+  // "پر کردن این فیلد الزامی هست" under the mobile field, not the
+  // format error. This runs without a database.
+  await page.goto("/login");
+  await page.getByLabel("رمز عبور").fill("something");
+  await page.getByRole("button", { name: "وارد شوید" }).click();
+  await expect(page.getByText("پر کردن این فیلد الزامی هست")).toBeVisible();
+  await expect(page.getByText("شماره موبایل نادرست است")).toHaveCount(0);
   await expect(
     page.getByText("مشکلی موقت پیش آمده است. لطفا دوباره تلاش کنید."),
   ).toHaveCount(0);

@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CircleAlert } from "lucide-react";
+import { ArrowLeft, CircleAlert, Eye, EyeOff } from "lucide-react";
 import { FormError } from "@/components/ui/alert";
 import { LoginToast } from "@/components/ui/login-toast";
 
@@ -21,6 +21,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [mobileError, setMobileError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
@@ -41,14 +42,17 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     let valid = true;
-    if (!MOBILE_RE.test(mobile.trim())) {
+    if (!mobile.trim()) {
+      setMobileError("پر کردن این فیلد الزامی هست");
+      valid = false;
+    } else if (!MOBILE_RE.test(mobile.trim())) {
       setMobileError("شماره موبایل نادرست است");
       valid = false;
     } else {
       setMobileError("");
     }
     if (!password) {
-      setPasswordError("رمز عبور نادرست است");
+      setPasswordError("پر کردن این فیلد الزامی هست");
       valid = false;
     } else {
       setPasswordError("");
@@ -135,15 +139,29 @@ export default function LoginPage() {
             >
               رمز عبور
             </label>
-            <input
-              id="password"
-              type="password"
-              dir="ltr"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => onPasswordChange(e.target.value)}
-              className="input h-10 w-full border border-border bg-surface-2 px-3 text-sm text-foreground outline-none placeholder:text-muted focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                dir="ltr"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => onPasswordChange(e.target.value)}
+                className="input h-10 w-full border border-border bg-surface-2 px-3 pr-10 text-sm text-foreground outline-none placeholder:text-muted focus:border-accent focus:ring-2 focus:ring-accent/20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "پنهان کردن رمز" : "نمایش رمز"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
+              >
+                {showPassword ? (
+                  <EyeOff size={18} aria-hidden="true" />
+                ) : (
+                  <Eye size={18} aria-hidden="true" />
+                )}
+              </button>
+            </div>
             {passwordError && (
               <p className="mt-1 flex items-center gap-1 text-xs text-danger">
                 <CircleAlert size={14} aria-hidden="true" />
