@@ -197,6 +197,32 @@ test("closed mobile menu links are not focusable (R-04)", async ({ page }) => {
   expect(where.startsWith("in-menu:")).toBe(false);
 });
 
+test("Escape closes the mobile menu and returns focus to the toggle (R-05)", async ({
+  page,
+}) => {
+  // R-05: Escape must close the mobile menu and return focus to the
+  // toggle. There was no Escape handler, so Escape did nothing and the
+  // menu stayed open. This test fails on the old code and passes after.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(500);
+  const mobileHeader = page.locator("#mobileHeader");
+  const menuToggle = page.getByRole("button", { name: "منو" });
+  // Open the menu.
+  await menuToggle.click();
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(mobileHeader).toHaveClass(/\bopen\b/);
+  // Press Escape. The menu must close and focus must return to the toggle.
+  await page.keyboard.press("Escape");
+  await expect(mobileHeader).not.toHaveClass(/\bopen\b/);
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+  const focused = await page.evaluate(
+    () => document.activeElement?.getAttribute("aria-label") ?? "",
+  );
+  expect(focused).toBe("منو");
+});
+
 test("footer renders with copyright, contact, and Instagram link", async ({
   page,
 }) => {

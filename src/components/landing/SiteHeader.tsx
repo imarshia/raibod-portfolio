@@ -101,6 +101,7 @@ export default function SiteHeader() {
   const desktopRef = useRef<HTMLElement | null>(null);
   const mobileRef = useRef<HTMLElement | null>(null);
   const backdropRef = useRef<HTMLDivElement | null>(null);
+  const toggleRef = useRef<HTMLButtonElement | null>(null);
   const menuOpenRef = useRef(false);
 
   useEffect(() => {
@@ -173,6 +174,22 @@ export default function SiteHeader() {
     if (open) mobileRef.current?.classList.remove("header-hidden");
   }
 
+  /* Escape closes the mobile menu and returns focus to the toggle
+     (R-05). Gated on menuOpen so the listener only exists while the
+     menu is open. Closes through setMenu, the single writer for the
+     menu classes (STD-017); no focus trap. */
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setMenu(false);
+        toggleRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+
   return (
     <>
       <header ref={desktopRef} className="site-header">
@@ -222,6 +239,7 @@ export default function SiteHeader() {
           <div className="mobile-actions">
             <button
               type="button"
+              ref={toggleRef}
               className="menu-toggle"
               aria-label="منو"
               aria-expanded={menuOpen}
