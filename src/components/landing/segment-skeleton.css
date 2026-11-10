@@ -1,0 +1,83 @@
+/* Segment skeletons: small route-appropriate loading states for the
+ * booking and login segments (R-06). The group loading.tsx renders the
+ * hero skeleton for the whole (public) group, so a client-side
+ * navigation to /booking or /login briefly showed the hero skeleton.
+ * These segment loading files override it per route (Next.js uses the
+ * nearest loading.tsx). Placeholder blocks in the shape of each page's
+ * content, with the same shimmer sweep as the hero skeleton. No
+ * spinner, no text. Colours come from the DS tokens (var(--border),
+ * var(--background)), never hardcoded.
+ *
+ * Geometry mirrors the page content, so sizes stay literal (same
+ * convention as hero-skeleton.css): card radius 12px is the DS card
+ * radius; field height 36px is the measured rendered field height
+ * and field radius 16px is the owner-set field radius (1650c77);
+ * button height 40px matches the DS button height.
+ */
+
+.segment-skeleton-card {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.segment-skeleton-block {
+  position: relative;
+  overflow: hidden;
+  background: var(--border);
+  border-radius: 6px;
+}
+
+.segment-skeleton-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  transform: translateX(-100%);
+  animation: segment-skeleton-shimmer 1.8s infinite;
+}
+
+@keyframes segment-skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
+
+.segment-skeleton-title {
+  width: 220px;
+  max-width: 80%;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.segment-skeleton-line {
+  width: 100%;
+  height: 16px;
+}
+
+.segment-skeleton-line--short {
+  width: 65%;
+}
+
+.segment-skeleton-field {
+  width: 100%;
+  height: 36px;
+  border-radius: 16px;
+}
+
+.segment-skeleton-button {
+  width: 160px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.segment-skeleton-button--full {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segment-skeleton-block::after {
+    animation: none;
+  }
+}

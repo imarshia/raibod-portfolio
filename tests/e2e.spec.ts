@@ -223,6 +223,69 @@ test("Escape closes the mobile menu and returns focus to the toggle (R-05)", asy
   expect(focused).toBe("منو");
 });
 
+test("booking and login use their own skeleton, not the hero skeleton (R-06)", async ({
+  page,
+}) => {
+  // R-06: navigating to /booking or /login must not show the hero
+  // skeleton. The group loading.tsx renders HeroSkeleton for the whole
+  // (public) group; the segment loading.tsx files override it per
+  // route (Next.js uses the nearest loading.tsx).
+  //
+  // A live throttled client-side navigation cannot reliably show the
+  // skeleton here: Next.js prefetches Link routes, so a click reuses
+  // the cached payload and no loading UI paints; and when the RSC
+  // fetch is delayed, React keeps the current page visible during the
+  // navigation transition instead of painting the loading boundary
+  // (verified by probes: a 5s delayed RSC fetch shows no skeleton at
+  // all). So this test proves the fix by file precedence and by the
+  // served response instead of by a live paint.
+  //
+  // Old-vs-new proof: before the fix there were no segment loading
+  // files, so the served HTML for /booking and /login carried only
+  // the hero skeleton as the loading fallback. After the fix the
+  // served HTML carries the segment skeleton for each route. This
+  // test fails on the old code (no segment skeleton in the response)
+  // and passes after the fix.
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const bookingLoading = path.join(
+    process.cwd(),
+    "src/app/(public)/booking/loading.tsx",
+  );
+  const loginLoading = path.join(
+    process.cwd(),
+    "src/app/(public)/login/loading.tsx",
+  );
+  expect(fs.existsSync(bookingLoading)).toBe(true);
+  expect(fs.existsSync(loginLoading)).toBe(true);
+  expect(fs.readFileSync(bookingLoading, "utf8")).toContain("booking-skeleton");
+  expect(fs.readFileSync(loginLoading, "utf8")).toContain("login-skeleton");
+
+  // The served HTML for each route must carry its own segment
+  // skeleton as the loading fallback.
+  const bookingRes = await page.request.get("/booking");
+  expect(bookingRes.ok()).toBe(true);
+  const bookingHtml = await bookingRes.text();
+  expect(bookingHtml).toContain("booking-skeleton");
+  const loginRes = await page.request.get("/login");
+  expect(loginRes.ok()).toBe(true);
+  const loginHtml = await loginRes.text();
+  expect(loginHtml).toContain("login-skeleton");
+
+  // Navigating to both routes renders the page content, and no
+  // skeleton remains once loaded.
+  await page.goto("/booking");
+  await expect(
+    page.getByText("رزرو آنلاین نوبت در مرحله بعد فعال می شود."),
+  ).toBeVisible();
+  await expect(page.locator(".hero-skeleton")).toHaveCount(0);
+  await expect(page.locator(".booking-skeleton")).toHaveCount(0);
+  await page.goto("/login");
+  await expect(page.getByRole("heading", { name: "ورود به پنل" })).toBeVisible();
+  await expect(page.locator(".hero-skeleton")).toHaveCount(0);
+  await expect(page.locator(".login-skeleton")).toHaveCount(0);
+});
+
 test("footer renders with copyright, contact, and Instagram link", async ({
   page,
 }) => {
