@@ -173,6 +173,30 @@ test("mobile menu close keeps the scrolled header state (LES-002)", async ({
   await expect(mobileHeader).not.toHaveCSS("box-shadow", "none");
 });
 
+test("closed mobile menu links are not focusable (R-04)", async ({ page }) => {
+  // R-04: closed mobile menu links must not be in the Tab order.
+  // The menu was hidden with grid 0fr + opacity 0 only, so the links
+  // stayed focusable. The fix adds visibility hidden to the closed
+  // state (REM-03). This test fails on the old CSS and passes after.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(500);
+  const menuToggle = page.getByRole("button", { name: "منو" });
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+  // Focus the toggle, then Tab. Focus must skip the closed menu links
+  // and land outside the menu.
+  await menuToggle.focus();
+  await page.keyboard.press("Tab");
+  const where = await page.evaluate(() => {
+    const el = document.activeElement as HTMLElement | null;
+    if (!el) return "none";
+    const inMenu = el.closest(".mobile-menu") !== null;
+    return (inMenu ? "in-menu:" : "outside:") + (el.textContent || "").trim();
+  });
+  expect(where.startsWith("in-menu:")).toBe(false);
+});
+
 test("footer renders with copyright, contact, and Instagram link", async ({
   page,
 }) => {
