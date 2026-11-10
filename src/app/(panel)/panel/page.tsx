@@ -8,7 +8,6 @@ import { getSessionUser, ROLE_LABELS } from "@/lib/auth";
 import { todayJalaliLatin } from "@/lib/jalali";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default async function PanelPage() {
   const user = await getSessionUser();
@@ -22,7 +21,6 @@ export default async function PanelPage() {
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
           <span className="font-bold">پنل رایبد</span>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
             <form action="/api/auth/logout" method="POST">
               <Button type="submit" variant="danger">
                 خروج
