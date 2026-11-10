@@ -4,9 +4,13 @@
 // desktop 1440x405, mobile 390x1053, received 2026-11-09).
 // The hero and the scroll experience were REMOVED by the owner
 // (2026-11-09, "remove the entire frame thing"); the hero will be
-// redesigned from scratch. HeroSection.tsx, hero-section.css,
-// EyewearScrollExperience.tsx and eyewear-scroll-experience.css
-// stay in the repo, unused, for reference.
+// redesigned from scratch. Their files (HeroSection.tsx,
+// hero-section.css, EyewearScrollExperience.tsx,
+// eyewear-scroll-experience.css, and the hero-building images) were
+// deleted from the repo on 2026-11-11 at the owner's direction
+// ("if they are not useful, delete them"); they were unused, with no
+// imports anywhere. HeroSkeleton.tsx and hero-skeleton.css stay:
+// they are still used by the loading skeleton in loading.tsx.
 // Services, about and contact below are still PROVISIONAL copy until
 // Arshia designs them in Figma.
 
