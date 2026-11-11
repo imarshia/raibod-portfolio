@@ -10,8 +10,10 @@
  *
  * Geometry mirrors the page content, so sizes stay literal (same
  * convention as hero-skeleton.css): card radius 12px is the DS card
- * radius; field height 36px is the measured rendered field height
- * and field radius 16px is the owner-set field radius (1650c77);
+ * radius; field height 40px and field radius 12px match the Figma
+ * login fields (verified live 2026-11-11; the owner changed the field
+ * radius from 16px to 12px on 2026-11-10). Only the login skeleton
+ * uses field blocks; the booking skeleton uses lines.
  * button height 40px matches the DS button height.
  */
 
@@ -62,8 +64,8 @@
 
 .segment-skeleton-field {
   width: 100%;
-  height: 36px;
-  border-radius: 16px;
+  height: 40px;
+  border-radius: 12px;
 }
 
 .segment-skeleton-button {
