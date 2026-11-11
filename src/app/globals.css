@@ -1,6 +1,10 @@
 /* Inter is used only for the login-page signature (owner spec: Inter 300,
-   10px). It is not a Design System font; Vazirmatn stays the system font. */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap");
+   10px). It is not a Design System font; Vazirmatn stays the system font.
+   Inter is self-hosted via @fontsource (Q-10, owner decision 2026-11-12):
+   no runtime request to Google Fonts, so the signature renders even
+   when Google Fonts is unreachable. Only weight 300 is imported,
+   matching the signature spec. */
+@import "@fontsource/inter/300.css";
 @import "tailwindcss";
 @import "@heroui/styles";
 @import "@fontsource/vazirmatn/400.css";
