@@ -195,9 +195,11 @@ test("empty mobile shows the required-field error without calling the API", asyn
   ).toHaveCount(0);
 });
 
-test("unauthenticated panel redirects to login", async ({ page }) => {
-  await page.goto("/panel");
-  await expect(page).toHaveURL(/\/login$/);
+test("unauthenticated dashboard shows the login form", async ({ page }) => {
+  // /dashboard is the panel entry point: with no session it shows the
+  // login form inline (no redirect to /login).
+  await page.goto("/dashboard");
+  await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("heading", { name: "ورود به پنل" })).toBeVisible();
 });
 
@@ -238,7 +240,7 @@ test("admin login sees the admin section", async ({ page }) => {
   await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "وارد شوید" }).click();
-  await expect(page).toHaveURL(/\/panel$/);
+  await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByTestId("admin-section")).toBeVisible();
 });
 
@@ -247,7 +249,7 @@ test("seller login does not see the admin section", async ({ page }) => {
   await page.getByLabel("شماره موبایل").fill("09120000001");
   await page.getByLabel("رمز عبور").fill(SELLER_PASSWORD);
   await page.getByRole("button", { name: "وارد شوید" }).click();
-  await expect(page).toHaveURL(/\/panel$/);
+  await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByTestId("admin-section")).toHaveCount(0);
   await expect(page.getByTestId("non-admin-note")).toBeVisible();
 });

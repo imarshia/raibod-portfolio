@@ -9,7 +9,10 @@ import { cookies, headers } from "next/headers";
 import { prisma } from "./db";
 
 export const SESSION_COOKIE = "raibod_session";
-const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
+// Session lifetime is 30 days (owner decision 2026-11-12; was 8 hours,
+// PoC behavior, ADR-020 provisional). The same TTL drives both the
+// database session expiresAt and the cookie maxAge.
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export type Role = "ADMIN" | "DOCTOR" | "SELLER" | "RECEPTION";
 

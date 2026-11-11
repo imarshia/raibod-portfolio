@@ -1,18 +1,22 @@
-// src/app/(panel)/panel: Raybod panel shell (Phase 1).
-// Server-side session and role checks are unchanged. The dashboard content
-// is a shell only: no real KPIs, because those need business data from
-// later phases. Restyled with Design System v3.2 tokens and components/ui.
+// src/app/(panel)/dashboard: Raybod panel shell (Phase 1).
+// This is the panel entry point. When there is no session, the login
+// form renders inline here (no redirect to /login). When a session
+// exists, the panel renders directly, so a logged-in user never
+// re-enters credentials. Server-side session and role checks are
+// unchanged. The dashboard content is a shell only: no real KPIs,
+// because those need business data from later phases. Restyled with
+// Design System v3.2 tokens and components/ui.
 
-import { redirect } from "next/navigation";
 import { getSessionUser, ROLE_LABELS } from "@/lib/auth";
 import { todayJalaliLatin } from "@/lib/jalali";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoginForm } from "@/components/ui/login-form";
 
-export default async function PanelPage() {
+export default async function DashboardPage() {
   const user = await getSessionUser();
   if (!user) {
-    redirect("/login");
+    return <LoginForm redirectTo="/dashboard" />;
   }
   const isAdmin = user.role === "ADMIN";
   return (
