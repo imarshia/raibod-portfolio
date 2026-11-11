@@ -116,10 +116,11 @@ test("login button radius is 16px per Figma, not the DS 12px", async ({
 }) => {
   // The Figma login button is 16px radius. This overrides STD-006
   // (button radius 12px) for this button only; the DS 12px rule still
-  // applies to other buttons. Recorded as an open item (see the task
-  // report). The button is a native button, not the HeroUI Button:
-  // the global .button override forces 12px on HeroUI buttons, so the
-  // 16px Figma radius needs a native button.
+  // applies to other buttons. The exception is recorded in
+  // DESIGN_SYSTEM.md section 3 (Radius). The button is a native
+  // button, not the HeroUI Button: the global .button override forces
+  // 12px on HeroUI buttons, so the 16px Figma radius needs a native
+  // button.
   await page.goto("/login");
   const cta = page.getByRole("button", { name: "وارد شوید" });
   const radius = await cta.evaluate(
