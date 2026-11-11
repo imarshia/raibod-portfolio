@@ -132,19 +132,32 @@ body {
    must not change; only the border becomes accent. The browser
    autofill paints its own yellow background on autofilled fields
    (Chrome -webkit-autofill), which breaks this. This override forces
-   the autofill background back to the field background (surface-2,
-   #F5F2EF, the colour the login fields use) and keeps the text colour,
-   so a focused or autofilled field keeps its background and only the
-   border changes to accent. The 5000s transition is the standard
-   companion trick that stops Chrome re-applying the yellow. */
+   the autofill background back to the field's own background
+   (var(--field), #FFFFFF) and keeps the text colour, so a focused or
+   autofilled field keeps its background and only the border changes
+   to accent. The 5000s transition is the standard companion trick
+   that stops Chrome re-applying the yellow.
+   The login fields use --surface-2 (#F5F2EF) instead of --field, so
+   they get their own scoped rule below (Q-08); the general rule must
+   not hardcode the login colour site-wide. */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset;
+  -webkit-box-shadow: 0 0 0 1000px var(--field) inset;
   -webkit-text-fill-color: var(--foreground);
   caret-color: var(--foreground);
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Login fields only: their background is --surface-2, so the autofill
+   override keeps that colour here. Scoped to the login page so other
+   fields keep their own background (Q-08). */
+.login-page input:-webkit-autofill,
+.login-page input:-webkit-autofill:hover,
+.login-page input:-webkit-autofill:focus,
+.login-page input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset;
 }
 
 /* Owner direction 2026-11-10: the HeroUI Toast border radius is 12px.
