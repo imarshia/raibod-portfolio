@@ -356,14 +356,16 @@ test("resize to desktop and back closes the mobile menu (Q-04 / R-08)", async ({
   // `open` class stayed on the header after a 390 -> 1440 -> 390
   // round-trip and the next toggle press was inverted (it opened a
   // menu that already looked open). This test fails on the old code
-  // and passes after.
+  // and passes after. The toggle is located by class, not by role:
+  // at desktop width the mobile header is display none, so the
+  // button leaves the accessibility tree and getByRole finds nothing.
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(500);
   const mobileHeader = page.locator("#mobileHeader");
   const backdrop = page.locator(".menu-backdrop");
-  const menuToggle = page.getByRole("button", { name: "منو" });
+  const menuToggle = page.locator(".menu-toggle");
   await menuToggle.click();
   await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
   await expect(mobileHeader).toHaveClass(/\bopen\b/);
