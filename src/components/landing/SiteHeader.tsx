@@ -151,10 +151,13 @@ export default function SiteHeader() {
     return () => window.removeEventListener("scroll", onScrollRequest);
   }, []);
 
-  /* The mobile menu closes when the viewport grows to desktop width. */
+  /* The mobile menu closes when the viewport grows to desktop width.
+     Close through setMenu, the single writer for the menu classes
+     (STD-017): the old setMenuOpen(false) left the `open` class on the
+     header after a resize round-trip (Q-04 / R-08). */
   useEffect(() => {
     function onResize() {
-      if (window.innerWidth >= 1024) setMenuOpen(false);
+      if (window.innerWidth >= 1024) setMenu(false);
     }
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);

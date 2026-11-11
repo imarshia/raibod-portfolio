@@ -347,6 +347,39 @@ test("Escape closes the mobile menu and returns focus to the toggle (R-05)", asy
   expect(focused).toBe("منو");
 });
 
+test("resize to desktop and back closes the mobile menu (Q-04 / R-08)", async ({
+  page,
+}) => {
+  // Q-04: the resize handler called setMenuOpen(false) directly,
+  // bypassing setMenu, the single writer for the menu classes, so the
+  // `open` class stayed on the header after a 390 -> 1440 -> 390
+  // round-trip and the next toggle press was inverted (it opened a
+  // menu that already looked open). This test fails on the old code
+  // and passes after.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(500);
+  const mobileHeader = page.locator("#mobileHeader");
+  const backdrop = page.locator(".menu-backdrop");
+  const menuToggle = page.getByRole("button", { name: "منو" });
+  await menuToggle.click();
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(mobileHeader).toHaveClass(/\bopen\b/);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(mobileHeader).not.toHaveClass(/\bopen\b/);
+  await expect(backdrop).not.toHaveClass(/\bshow\b/);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(mobileHeader).not.toHaveClass(/\bopen\b/);
+  await expect(backdrop).not.toHaveClass(/\bshow\b/);
+  // The toggle still works the right way round: one press opens.
+  await menuToggle.click();
+  await expect(menuToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(mobileHeader).toHaveClass(/\bopen\b/);
+});
+
 test("booking and login use their own skeleton, not the hero skeleton (R-06)", async ({
   page,
 }) => {
