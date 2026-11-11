@@ -101,7 +101,10 @@ export default function LoginPage() {
 
   return (
     <main className="relative flex h-screen h-dvh flex-col items-center justify-center overflow-hidden bg-accent px-4 py-4 max-md:px-[25px]">
-      <div className="w-[400px] max-w-full rounded-[24px] border border-border bg-background px-[17px] pb-[17px] pt-9 shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+      {/* Card shadow is the Figma login value (dy 8, blur 8, black 10%),
+          not the DS modal shadow (0 8px 24px / 0.12) that was here
+          before (Q-07). */}
+      <div className="w-[400px] max-w-full rounded-[24px] border border-border bg-background px-[17px] pb-[17px] pt-9 shadow-[0_8px_8px_rgba(0,0,0,0.1)]">
         <h1 className="text-center text-2xl font-bold text-foreground">
           ورود به پنل
         </h1>
