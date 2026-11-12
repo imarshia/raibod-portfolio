@@ -203,6 +203,14 @@ test("unauthenticated dashboard shows the login form", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "ورود به پنل" })).toBeVisible();
 });
 
+test("unauthenticated activity log redirects to login", async ({ page }) => {
+  // The activity log is management only: with no session the page
+  // redirects to /login (it never renders the log to a guest).
+  await page.goto("/dashboard/activity");
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole("heading", { name: "ورود به پنل" })).toBeVisible();
+});
+
 test("wrong password shows a Persian error", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000000");

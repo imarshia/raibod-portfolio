@@ -35,6 +35,10 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
   sessions     Session[]
+  // Activity log (added 2026-11-12, owner decision). The manager sees
+  // what employees do. A user with log entries cannot be deleted:
+  // the FK is Restrict, so the log is never orphaned.
+  auditLogs    AuditLog[]
 
   @@index([role])
   @@map("users")
@@ -54,4 +58,26 @@ model Session {
   @@index([userId])
   @@index([expiresAt])
   @@map("sessions")
+}
+
+// Activity log (AuditLog). One row per user action the manager may
+// need to review: login, logout, and later business operations
+// (create/update/delete of customers, prescriptions, sales, etc.),
+// added as those features are built. The action is an English code;
+// the Persian label lives in src/lib/audit.ts (ACTION_LABELS).
+// The log is append-only: no update or delete path exists.
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  action     String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  details    String?
+  ip         String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { logActivity } from "@/lib/audit";
 import {
   createSession,
   getLoginLockState,
@@ -46,6 +47,15 @@ export async function POST(request: NextRequest) {
       data: { lastLoginAt: new Date() },
     });
     await createSession(user.id);
+    // Activity log: a successful login is recorded. Failed logins
+    // are NOT logged here (the mobile would be recorded on a failed
+    // attempt); failures are already counted by the lockout.
+    await logActivity({
+      userId: user.id,
+      action: "login",
+      details: "ورود به پنل",
+      ip: request.headers.get("x-forwarded-for") ?? undefined,
+    });
     return NextResponse.json({ ok: true, role: user.role });
   } catch {
     // A database or server failure must not look like a wrong password:

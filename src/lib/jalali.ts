@@ -50,6 +50,25 @@ export function todayJalaliLatin(): string {
   return formatJalaliLatin(new Date());
 }
 
+// Date and time for the activity log: Jalali YYYY/MM/DD plus the
+// Asia/Tehran time HH:MM, Latin digits, dir="ltr" in the UI.
+export function formatJalaliDateTimeLatin(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Tehran",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  const j = toJalaali(get("year"), get("month"), get("day"));
+  const hh = String(get("hour")).padStart(2, "0");
+  const mm = String(get("minute")).padStart(2, "0");
+  return `${j.jy}/${String(j.jm).padStart(2, "0")}/${String(j.jd).padStart(2, "0")} ${hh}:${mm}`;
+}
+
 export function jalaliToGregorian(jy: number, jm: number, jd: number): Date {
   const g = toGregorian(jy, jm, jd);
   return new Date(Date.UTC(g.gy, g.gm - 1, g.gd));

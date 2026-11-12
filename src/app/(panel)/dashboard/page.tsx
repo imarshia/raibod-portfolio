@@ -7,6 +7,7 @@
 // because those need business data from later phases. Restyled with
 // Design System v3.2 tokens and components/ui.
 
+import Link from "next/link";
 import { getSessionUser, ROLE_LABELS } from "@/lib/auth";
 import { todayJalaliLatin } from "@/lib/jalali";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,12 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent>
               <p className="text-body-sm">این بخش فقط برای نقش ADMIN دیده می شود.</p>
+              <Link
+                href="/dashboard/activity"
+                className="mt-3 inline-block text-sm text-accent"
+              >
+                لاگ فعالیت
+              </Link>
             </CardContent>
           </Card>
         ) : (
