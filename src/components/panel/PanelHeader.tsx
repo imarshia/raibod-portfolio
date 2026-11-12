@@ -30,7 +30,7 @@ function BellButton() {
       aria-label="اعلان‌ها"
       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[#EBEBEC] text-foreground"
     >
-      <Bell size={24} strokeWidth={2} aria-hidden="true" />
+      <Bell size={16} strokeWidth={1.33} aria-hidden="true" />
     </button>
   );
 }
@@ -48,6 +48,12 @@ export function PanelHeader({
   if (variant === "mobile") {
     return (
       <header className="flex h-[77px] shrink-0 items-center justify-between border-b border-border bg-background px-4">
+        <div className="text-right">
+          <p className="text-sm leading-6 text-[#333333]">{roleLabel}</p>
+          <p className="text-base font-bold leading-6 text-foreground">
+            {user.fullName}؛ خوش آمدید
+          </p>
+        </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -55,17 +61,11 @@ export function PanelHeader({
             aria-label="باز کردن منو"
             aria-expanded={drawerOpen}
             onClick={onMenuClick}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EBEBEC] text-foreground"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[#EBEBEC] text-foreground"
           >
-            <Menu size={24} strokeWidth={2} aria-hidden="true" />
+            <Menu size={16} strokeWidth={1.33} aria-hidden="true" />
           </button>
           <BellButton />
-        </div>
-        <div className="text-right">
-          <p className="text-sm leading-6 text-[#333333]">{roleLabel}</p>
-          <p className="text-base font-bold leading-6 text-foreground">
-            {user.fullName}؛ خوش آمدید
-          </p>
         </div>
       </header>
     );

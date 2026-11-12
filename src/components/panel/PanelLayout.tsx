@@ -98,6 +98,7 @@ export function PanelLayout({
       />
       <PanelSidebar
         asideLabel="منو"
+        compact
         className={`${DRAWER_CONTAINER} ${drawerOpen ? "translate-x-0" : "translate-x-[105%]"}`}
       />
       {drawerOpen && (
@@ -105,9 +106,9 @@ export function PanelLayout({
           type="button"
           aria-label="بستن منو"
           onClick={closeDrawer}
-          className="fixed end-4 top-[18px] z-[60] flex h-10 w-10 items-center justify-center rounded-full bg-[#EBEBEC] text-foreground lg:hidden"
+          className="fixed end-[17px] top-[24px] z-[60] flex h-6 w-6 items-center justify-center rounded-[12px] bg-[#EBEBEC] text-foreground lg:hidden"
         >
-          <X size={24} strokeWidth={2} aria-hidden="true" />
+          <X size={16} strokeWidth={1.5} aria-hidden="true" />
         </button>
       )}
     </div>

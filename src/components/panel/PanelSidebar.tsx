@@ -78,12 +78,19 @@ function isItemActive(pathname: string, href: string): boolean {
 }
 
 const ITEM_BASE =
-  "flex h-11 w-[267px] items-center gap-2 px-6 py-2 text-base leading-7 text-[#333333] transition-colors";
+  "flex h-11 w-[267px] items-center px-6 py-2 text-[#333333] transition-colors";
 const ITEM_SELECTED =
   "rounded-[8px_0_0_8px] bg-[#E6E8E8] text-accent shadow-[inset_-2px_0_0_var(--accent)]";
 
-function PanelMenu() {
+// The mobile drawer uses a 4px icon-text gap, 14px font and 20px
+// icons; the desktop sidebar uses 8px gap, 16px font and 24px icons
+// (Figma). The gap/font/icon are props so the menu stays defined once.
+function PanelMenu({ compact = false }: { compact?: boolean }) {
   const pathname = usePathname();
+  const gap = compact ? "gap-1" : "gap-2";
+  const text = compact ? "text-sm leading-6" : "text-base leading-7";
+  const iconSize = compact ? 20 : 24;
+  const iconClass = compact ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0";
   return (
     <nav className="flex flex-1 flex-col gap-4">
       {MENU_ITEMS.map((item) => {
@@ -96,9 +103,9 @@ function PanelMenu() {
             <form key="logout" action="/api/auth/logout" method="POST">
               <button
                 type="submit"
-                className={`${ITEM_BASE} cursor-pointer text-danger hover:text-danger`}
+                className={`${ITEM_BASE} ${gap} ${text} cursor-pointer text-danger hover:text-danger`}
               >
-                <Icon size={24} strokeWidth={2} className="h-6 w-6 shrink-0" aria-hidden="true" />
+                <Icon size={iconSize} strokeWidth={2} className={iconClass} aria-hidden="true" />
                 <span>{item.label}</span>
               </button>
             </form>
@@ -111,9 +118,9 @@ function PanelMenu() {
             <Link
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`${ITEM_BASE} ${active ? ITEM_SELECTED : "hover:text-accent-hover"}`}
+              className={`${ITEM_BASE} ${gap} ${text} ${active ? ITEM_SELECTED : "hover:text-accent-hover"}`}
             >
-              <Icon size={24} strokeWidth={2} className="h-6 w-6 shrink-0" aria-hidden="true" />
+              <Icon size={iconSize} strokeWidth={2} className={iconClass} aria-hidden="true" />
               <span>{item.label}</span>
             </Link>
           </Fragment>
@@ -127,12 +134,16 @@ function PanelMenu() {
 // (300px, full height, border on the edge facing main) or the mobile
 // drawer (fixed, slides in from the right). asideLabel is set only
 // for the drawer, which the task requires to carry aria-label "منو".
+// compact renders the mobile 4px icon-text gap, 14px font and 20px
+// icons; desktop uses 8px gap, 16px font and 24px icons.
 export function PanelSidebar({
   className = "",
   asideLabel,
+  compact = false,
 }: {
   className?: string;
   asideLabel?: string;
+  compact?: boolean;
 }) {
   return (
     <aside aria-label={asideLabel} className={className}>
@@ -146,7 +157,7 @@ export function PanelSidebar({
           priority
         />
       </div>
-      <PanelMenu />
+      <PanelMenu compact={compact} />
       <p className="pt-3 text-center text-[10px] leading-4 text-muted">
         A Product By Arshiasdrl
       </p>
