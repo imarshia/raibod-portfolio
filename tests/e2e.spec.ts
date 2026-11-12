@@ -247,14 +247,16 @@ test("admin login sees the panel shell and the activity log", async ({ page }) =
   // The Phase 1 welcome card with the admin section was replaced by
   // the Figma dashboard shell (2026-11-12): the sidebar and header
   // are the panel chrome now, and the activity log lives under
-  // "لاگ‌ها" in the sidebar. The seed admin fullName is "مدیر رایبد".
+  // "لاگ‌ها" in the sidebar. The test seed admin fullName is
+  // "مدیر تست" (prisma/seed.ts); "مدیر رایبد" is the real manager
+  // account created by scripts/seed-admin.ts, not this test login.
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("link", { name: "لاگ‌ها" })).toBeVisible();
-  await expect(page.getByText("مدیر رایبد؛ خوش آمدید")).toBeVisible();
+  await expect(page.getByText("مدیر تست؛ خوش آمدید")).toBeVisible();
   await page.goto("/dashboard/activity");
   await expect(page.getByRole("heading", { name: "لاگ فعالیت" })).toBeVisible();
 });
