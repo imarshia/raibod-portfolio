@@ -243,23 +243,33 @@ test("database outage shows the temporary-error message (Q-02)", async ({
   await expect(page.getByText("موبایل یا رمز درست نیست.")).toHaveCount(0);
 });
 
-test("admin login sees the admin section", async ({ page }) => {
+test("admin login sees the panel shell and the activity log", async ({ page }) => {
+  // The Phase 1 welcome card with the admin section was replaced by
+  // the Figma dashboard shell (2026-11-12): the sidebar and header
+  // are the panel chrome now, and the activity log lives under
+  // "لاگ‌ها" in the sidebar. The seed admin fullName is "مدیر رایبد".
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000000");
   await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByTestId("admin-section")).toBeVisible();
+  await expect(page.getByRole("link", { name: "لاگ‌ها" })).toBeVisible();
+  await expect(page.getByText("مدیر رایبد؛ خوش آمدید")).toBeVisible();
+  await page.goto("/dashboard/activity");
+  await expect(page.getByRole("heading", { name: "لاگ فعالیت" })).toBeVisible();
 });
 
-test("seller login does not see the admin section", async ({ page }) => {
+test("seller login sees the panel shell but not the activity log", async ({ page }) => {
+  // The seller gets the same shell, but the activity log is
+  // management only: it shows the access-denied message instead.
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000001");
   await page.getByLabel("رمز عبور").fill(SELLER_PASSWORD);
   await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
-  await expect(page.getByTestId("admin-section")).toHaveCount(0);
-  await expect(page.getByTestId("non-admin-note")).toBeVisible();
+  await expect(page.getByRole("link", { name: "داشبورد" })).toBeVisible();
+  await page.goto("/dashboard/activity");
+  await expect(page.getByText("دسترسی ندارید")).toBeVisible();
 });
 
 test("mobile menu close keeps the scrolled header state (LES-002)", async ({

@@ -69,6 +69,22 @@ export function formatJalaliDateTimeLatin(date: Date): string {
   return `${j.jy}/${String(j.jm).padStart(2, "0")}/${String(j.jd).padStart(2, "0")} ${hh}:${mm}`;
 }
 
+// Header date for the panel shell: Persian weekday and long Jalali
+// date with Latin digits, e.g. weekday "پنجشنبه", date "21 آبان 1405"
+// (Figma panel header). fa-IR uses the Jalali calendar; nu-latn
+// forces Latin digits. Verified against the Figma values with node.
+export function todayJalaliHeaderLatin(): { weekday: string; date: string } {
+  const parts = new Intl.DateTimeFormat("fa-IR-u-nu-latn", {
+    timeZone: "Asia/Tehran",
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).formatToParts(new Date());
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return { weekday: get("weekday"), date: `${get("day")} ${get("month")} ${get("year")}` };
+}
+
 export function jalaliToGregorian(jy: number, jm: number, jd: number): Date {
   const g = toGregorian(jy, jm, jd);
   return new Date(Date.UTC(g.gy, g.gm - 1, g.gd));

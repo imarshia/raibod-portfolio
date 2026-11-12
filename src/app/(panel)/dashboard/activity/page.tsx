@@ -5,9 +5,10 @@
 // append-only: there is no delete button and no hard delete.
 // Entries are newest first, 50 per page. Dates are Jalali with
 // time, Latin digits, dir="ltr" (Design System v3.2 section 2).
+// The page renders inside the panel shell (sidebar + header) from
+// the (panel) layout; it has no header of its own.
 
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
 import { actionLabel } from "@/lib/audit";
 import { formatJalaliDateTimeLatin } from "@/lib/jalali";
@@ -21,19 +22,17 @@ export default async function ActivityPage() {
   }
   if (user.role !== "ADMIN") {
     return (
-      <div className="min-h-screen bg-background text-foreground">
-        <main className="mx-auto max-w-3xl px-4 py-10">
-          <Card variant="default">
-            <CardHeader>
-              <CardTitle>دسترسی ندارید</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-body-sm text-muted">
-                این صفحه فقط برای مدیر است.
-              </p>
-            </CardContent>
-          </Card>
-        </main>
+      <div className="mx-auto max-w-3xl px-4 py-10">
+        <Card variant="default">
+          <CardHeader>
+            <CardTitle>دسترسی ندارید</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-body-sm text-muted">
+              این صفحه فقط برای مدیر است.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -43,56 +42,45 @@ export default async function ActivityPage() {
     include: { user: { select: { fullName: true } } },
   });
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-surface">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-          <span className="font-bold">لاگ فعالیت</span>
-          <Link href="/dashboard" className="text-sm text-accent">
-            بازگشت به داشبورد
-          </Link>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <Card variant="default">
-          <CardHeader>
-            <CardTitle>لاگ فعالیت</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {entries.length === 0 ? (
-              <p className="text-body-sm text-muted">
-                هنوز فعالیتی ثبت نشده است.
-              </p>
-            ) : (
-              <ul>
-                {entries.map((entry) => (
-                  <li
-                    key={entry.id}
-                    className="flex items-start justify-between gap-4 border-b border-border py-3 last:border-b-0"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold">
-                        {entry.user.fullName} - {actionLabel(entry.action)}
+    <div className="mx-auto max-w-3xl px-4 py-10">
+      <Card variant="default">
+        <CardHeader>
+          <CardTitle>لاگ فعالیت</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {entries.length === 0 ? (
+            <p className="text-body-sm text-muted">
+              هنوز فعالیتی ثبت نشده است.
+            </p>
+          ) : (
+            <ul>
+              {entries.map((entry) => (
+                <li
+                  key={entry.id}
+                  className="flex items-start justify-between gap-4 border-b border-border py-3 last:border-b-0"
+                >
+                  <div>
+                    <p className="text-sm font-semibold">
+                      {entry.user.fullName} - {actionLabel(entry.action)}
+                    </p>
+                    {entry.details && (
+                      <p className="mt-1 text-body-sm text-muted">
+                        {entry.details}
                       </p>
-                      {entry.details && (
-                        <p className="mt-1 text-body-sm text-muted">
-                          {entry.details}
-                        </p>
-                      )}
-                    </div>
-                    <span
-                      dir="ltr"
-                      className="shrink-0 text-body-sm text-muted tnum"
-                    >
-                      {formatJalaliDateTimeLatin(entry.createdAt)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </main>
+                    )}
+                  </div>
+                  <span
+                    dir="ltr"
+                    className="shrink-0 text-body-sm text-muted tnum"
+                  >
+                    {formatJalaliDateTimeLatin(entry.createdAt)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
