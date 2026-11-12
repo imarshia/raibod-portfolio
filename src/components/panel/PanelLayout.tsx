@@ -14,7 +14,7 @@ import { PanelHeader } from "./PanelHeader";
 import { PanelSidebar } from "./PanelSidebar";
 
 const SIDEBAR_CONTAINER =
-  "flex w-[300px] shrink-0 flex-col border-e border-border bg-background px-4 pb-3 pt-6";
+  "sticky top-0 flex h-dvh w-[300px] shrink-0 flex-col border-e border-border bg-background px-4 pb-3 pt-6";
 
 const DRAWER_CONTAINER =
   "fixed inset-y-0 start-0 z-50 flex w-[300px] max-w-[85vw] flex-col bg-background px-4 pb-3 pt-6 transition-transform duration-300 ease-out lg:hidden";
