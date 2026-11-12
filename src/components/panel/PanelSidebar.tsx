@@ -32,6 +32,7 @@ import {
   User,
   UserRoundPlus,
   Users,
+  X,
   type LucideIcon,
 } from "lucide-react";
 
@@ -136,17 +137,33 @@ function PanelMenu({ compact = false }: { compact?: boolean }) {
 // for the drawer, which the task requires to carry aria-label "منو".
 // compact renders the mobile 4px icon-text gap, 14px font and 20px
 // icons; desktop uses 8px gap, 16px font and 24px icons.
+// onClose renders the close button INSIDE the drawer (Figma: the
+// CloseButton is part of the drawer SVG, 24x24, radius 12, left
+// 17px, top 24px, X icon 16px, 1.5px stroke). It is only set for
+// the drawer; the desktop sidebar has no close button.
 export function PanelSidebar({
   className = "",
   asideLabel,
   compact = false,
+  onClose,
 }: {
   className?: string;
   asideLabel?: string;
   compact?: boolean;
+  onClose?: () => void;
 }) {
   return (
     <aside aria-label={asideLabel} className={className}>
+      {onClose && (
+        <button
+          type="button"
+          aria-label="بستن منو"
+          onClick={onClose}
+          className="absolute end-[17px] top-[24px] z-10 flex h-6 w-6 items-center justify-center rounded-[12px] bg-[#EBEBEC] text-foreground"
+        >
+          <X size={16} strokeWidth={1.5} aria-hidden="true" />
+        </button>
+      )}
       <div className="mb-10 flex h-14 justify-center">
         <Image
           src="/images/raibod-logo.png"

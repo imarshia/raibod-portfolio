@@ -10,7 +10,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
 import { PanelHeader } from "./PanelHeader";
 import { PanelSidebar } from "./PanelSidebar";
 
@@ -99,18 +98,9 @@ export function PanelLayout({
       <PanelSidebar
         asideLabel="منو"
         compact
+        onClose={closeDrawer}
         className={`${DRAWER_CONTAINER} ${drawerOpen ? "translate-x-0" : "translate-x-[105%]"}`}
       />
-      {drawerOpen && (
-        <button
-          type="button"
-          aria-label="بستن منو"
-          onClick={closeDrawer}
-          className="fixed end-[17px] top-[24px] z-[60] flex h-6 w-6 items-center justify-center rounded-[12px] bg-[#EBEBEC] text-foreground lg:hidden"
-        >
-          <X size={16} strokeWidth={1.5} aria-hidden="true" />
-        </button>
-      )}
     </div>
   );
 }
