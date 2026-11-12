@@ -63,7 +63,7 @@ export function PanelHeader({
         <button
           type="button"
           ref={menuButtonRef}
-          aria-label="باز کردن منو"
+          aria-label={drawerOpen ? "بستن منو" : "باز کردن منو"}
           aria-expanded={drawerOpen}
           onClick={onMenuClick}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[#EBEBEC] text-foreground lg:hidden"
