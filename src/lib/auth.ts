@@ -50,11 +50,17 @@ function hashToken(token: string): string {
 async function isSecureRequest(): Promise<boolean> {
   if (process.env.NODE_ENV !== "production") return false;
   const host = (await headers()).get("host") ?? "";
+  // R-14: a bracketed IPv6 host ("[::1]" or "[::1]:3000") splits on ":"
+  // to "[", so a hostname check for "[::1]" can never match it. Check
+  // the raw host for the loopback before the split.
+  const lowerHost = host.toLowerCase();
+  if (lowerHost === "[::1]" || lowerHost.startsWith("[::1]:")) {
+    return false;
+  }
   const hostname = host.split(":")[0].toLowerCase();
   if (
     hostname === "localhost" ||
     hostname === "127.0.0.1" ||
-    hostname === "[::1]" ||
     hostname.startsWith("10.") ||
     hostname.startsWith("192.168.") ||
     /^172\.(1[6-9]|2\d|3[01])\./.test(hostname)
