@@ -98,6 +98,7 @@ export function PanelLayout({
         asideLabel="منو"
         compact
         onClose={closeDrawer}
+        inert={!drawerOpen}
         className={`${DRAWER_CONTAINER} ${drawerOpen ? "translate-x-0" : "translate-x-[105%]"}`}
       />
     </div>

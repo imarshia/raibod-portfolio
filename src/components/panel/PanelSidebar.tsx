@@ -141,19 +141,27 @@ function PanelMenu({ compact = false }: { compact?: boolean }) {
 // CloseButton is part of the drawer SVG, 24x24, radius 12, left
 // 17px, top 24px, X icon 16px, 1.5px stroke). It is only set for
 // the drawer; the desktop sidebar has no close button.
+// inert is set only for the drawer, when it is closed (R-11): the
+// closed drawer is translated off-screen but still in the DOM, and
+// without inert its links stay in the Tab order. inert removes them
+// from Tab order and the accessibility tree without touching the
+// slide-out animation; when the drawer opens, inert is false and
+// the links are focusable again.
 export function PanelSidebar({
   className = "",
   asideLabel,
   compact = false,
   onClose,
+  inert,
 }: {
   className?: string;
   asideLabel?: string;
   compact?: boolean;
   onClose?: () => void;
+  inert?: boolean;
 }) {
   return (
-    <aside aria-label={asideLabel} className={className}>
+    <aside aria-label={asideLabel} inert={inert} className={className}>
       {onClose && (
         <button
           type="button"
