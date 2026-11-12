@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
     const ok = await verifyPassword(user.passwordHash, body.password);
     if (!ok) {
-      await recordFailedLogin(user.id, lock.failedLoginAttempts);
+      await recordFailedLogin(user.id);
       return NextResponse.json({ error: "invalid credentials" }, { status: 401 });
     }
     await resetLoginAttempts(user.id);

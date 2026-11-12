@@ -512,3 +512,35 @@ test("footer is visible on mobile", async ({ page }) => {
     footer.getByRole("link", { name: "اینستاگرام عینک رایبد" }),
   ).toBeVisible();
 });
+
+test("concurrent wrong passwords lock the seller account (Task 2)", async ({
+  page,
+}) => {
+  // Task 2: the failed-login counter must increment atomically. Five
+  // concurrent wrong-password logins used to read the same counter and
+  // overwrite each other, so the lockout counted too few attempts and
+  // the account never locked. With the atomic increment, all five
+  // count and the next attempt is rejected with 429.
+  // Runs last on purpose: it locks the seller account for 15 minutes.
+  // Re-seed before the next run to unlock it (the seed clears the
+  // counters for both test accounts).
+  const attempts = await Promise.all(
+    Array.from({ length: 5 }, () =>
+      page.request.post("/api/auth/login", {
+        data: { mobile: "09120000001", password: "wrong-password" },
+      }),
+    ),
+  );
+  // All five passed the lock check (the account was unlocked when they
+  // started) and failed the password, so all five return 401.
+  for (const res of attempts) {
+    expect(res.status()).toBe(401);
+  }
+  // The sixth attempt now hits the lock: 429 with retryAfterSeconds.
+  const locked = await page.request.post("/api/auth/login", {
+    data: { mobile: "09120000001", password: "wrong-password" },
+  });
+  expect(locked.status()).toBe(429);
+  const body = (await locked.json()) as { retryAfterSeconds?: number };
+  expect(body.retryAfterSeconds).toBeGreaterThan(0);
+});

@@ -158,18 +158,29 @@ export async function getLoginLockState(userId: string): Promise<{
   };
 }
 
-export async function recordFailedLogin(
-  userId: string,
-  currentAttempts: number,
-): Promise<Date | null> {
-  const attempts = currentAttempts + 1;
-  const lockedUntil =
-    attempts >= MAX_FAILED_LOGINS ? new Date(Date.now() + LOCKOUT_MS) : null;
-  await prisma.user.update({
+export async function recordFailedLogin(userId: string): Promise<Date | null> {
+  // Task 2: the increment must be atomic. The old signature took the
+  // counter as an argument (read earlier by getLoginLockState), so
+  // concurrent wrong-password requests all read the same number and
+  // overwrote each other; the counter under-counted and the lockout
+  // fired late or never. Prisma's increment runs as one atomic
+  // operation, and the returned value is the count after this attempt.
+  const updated = await prisma.user.update({
     where: { id: userId },
-    data: { failedLoginAttempts: attempts, lockedUntil },
+    data: { failedLoginAttempts: { increment: 1 } },
+    select: { failedLoginAttempts: true },
   });
-  return lockedUntil;
+  if (updated.failedLoginAttempts >= MAX_FAILED_LOGINS) {
+    // A second update sets the lock. If two concurrent requests both
+    // reach this branch, both set the same lock; that is harmless.
+    const lockedUntil = new Date(Date.now() + LOCKOUT_MS);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { lockedUntil },
+    });
+    return lockedUntil;
+  }
+  return null;
 }
 
 export async function resetLoginAttempts(userId: string): Promise<void> {
