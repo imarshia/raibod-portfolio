@@ -39,6 +39,31 @@ function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
+// The Secure cookie flag must only be set when the connection is
+// actually HTTPS. `next start` sets NODE_ENV=production even for
+// local LAN testing over plain HTTP, so NODE_ENV alone is wrong:
+// a Secure cookie is rejected by the browser over http://<LAN-IP>
+// (not a secure context), the session cookie is never stored, and
+// login silently stays on the login page. Localhost works because
+// browsers treat it as a secure context. So: Secure only when the
+// request host is not local (not localhost and not a private IP).
+async function isSecureRequest(): Promise<boolean> {
+  if (process.env.NODE_ENV !== "production") return false;
+  const host = (await headers()).get("host") ?? "";
+  const hostname = host.split(":")[0].toLowerCase();
+  if (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "[::1]" ||
+    hostname.startsWith("10.") ||
+    hostname.startsWith("192.168.") ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname)
+  ) {
+    return false;
+  }
+  return true;
+}
+
 export async function createSession(userId: string): Promise<string> {
   const token = randomBytes(32).toString("hex");
   await prisma.session.create({
@@ -54,7 +79,7 @@ export async function createSession(userId: string): Promise<string> {
   jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: await isSecureRequest(),
     path: "/",
     maxAge: SESSION_TTL_MS / 1000,
   });
