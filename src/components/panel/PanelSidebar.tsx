@@ -79,7 +79,7 @@ function isItemActive(pathname: string, href: string): boolean {
 }
 
 const ITEM_BASE =
-  "flex h-11 w-[267px] items-center px-6 py-2 text-[#333333] transition-colors";
+  "flex h-11 w-full items-center px-6 py-2 text-[#333333] transition-colors";
 const ITEM_SELECTED =
   "rounded-[8px_0_0_8px] bg-[#E6E8E8] text-accent shadow-[inset_-2px_0_0_var(--accent)]";
 
@@ -97,7 +97,7 @@ function PanelMenu({ compact = false }: { compact?: boolean }) {
       {MENU_ITEMS.map((item) => {
         const Icon = item.icon;
         const divider = item.type === "link" && item.dividerBefore && (
-          <div key={`divider-${item.href}`} className="h-px w-[267px] bg-border" role="separator" />
+          <div key={`divider-${item.href}`} className="h-px w-full bg-border" role="separator" />
         );
         if (item.type === "logout") {
           return (
