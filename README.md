@@ -126,7 +126,7 @@ BASE_URL=http://localhost:3000 npm run test:lockout
 - `src/lib/auth`: رمز Argon2id، سشن، بررسی نقش
 - `src/lib/jalali`: تبدیل میلادی به جلالی با منطقه زمانی Asia/Tehran (نمایش با ارقام لاتین)
 - `src/app/(public)`: صفحه اصلی (لندینگ)، ورود، پوسته رزرو
-- `src/app/(panel)/panel`: پنل با کنترل دسترسی سمت سرور
+- `src/app/(panel)/dashboard`: پنل با کنترل دسترسی سمت سرور
 - `src/middleware.ts`: مسیریابی بر اساس هاست
 - `prisma/`: اسکیما، Migrationها، سید تست
 - `scripts/`: تست Exclusion، تست قفل ورود، دانلود موتور Prisma
