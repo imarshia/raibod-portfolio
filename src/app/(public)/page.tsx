@@ -1,4 +1,4 @@
-// src/app/(public)/page.tsx: Raybod public landing (Phase 1).
+// src/app/(public)/page.tsx: Raibod public landing (Phase 1).
 // Header and footer are FINAL, built exactly from Arshia's Figma
 // frames: SiteHeader (final header) and SiteFooter (footer SVGs,
 // desktop 1440x405, mobile 390x1053, received 2026-11-09).
