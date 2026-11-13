@@ -236,7 +236,6 @@ export default function SiteHeader() {
               alt="عینک رایبد"
               width={76}
               height={56}
-              priority
             />
           </Link>
           <div className="mobile-actions">

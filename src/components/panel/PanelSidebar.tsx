@@ -182,7 +182,6 @@ export function PanelSidebar({
           width={76}
           height={56}
           className="h-14 w-auto"
-          priority
         />
       </div>
       <PanelMenu compact={compact} />
