@@ -9,6 +9,9 @@ import "dotenv/config";
 
 // Test-account passwords come from the environment (gitignored .env).
 // They are never hardcoded: a missing variable fails the run loudly.
+// They are read lazily inside the login tests (T-04): reading them
+// at module scope made the DB-free tests fail to load without
+// TEST_ADMIN_PASSWORD and TEST_SELLER_PASSWORD set.
 function testPassword(name: "TEST_ADMIN_PASSWORD" | "TEST_SELLER_PASSWORD"): string {
   const value = process.env[name];
   if (!value) {
@@ -18,9 +21,6 @@ function testPassword(name: "TEST_ADMIN_PASSWORD" | "TEST_SELLER_PASSWORD"): str
   }
   return value;
 }
-
-const ADMIN_PASSWORD = testPassword("TEST_ADMIN_PASSWORD");
-const SELLER_PASSWORD = testPassword("TEST_SELLER_PASSWORD");
 
 test("landing renders without hero, with services and footer", async ({ page }) => {
   await page.goto("/");
@@ -252,7 +252,7 @@ test("admin login sees the panel shell and the activity log", async ({ page }) =
   // account created by scripts/seed-admin.ts, not this test login.
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000000");
-  await page.getByLabel("رمز عبور").fill(ADMIN_PASSWORD);
+  await page.getByLabel("رمز عبور").fill(testPassword("TEST_ADMIN_PASSWORD"));
   await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("link", { name: "لاگ‌ها" })).toBeVisible();
@@ -266,7 +266,7 @@ test("seller login sees the panel shell but not the activity log", async ({ page
   // management only: it shows the access-denied message instead.
   await page.goto("/login");
   await page.getByLabel("شماره موبایل").fill("09120000001");
-  await page.getByLabel("رمز عبور").fill(SELLER_PASSWORD);
+  await page.getByLabel("رمز عبور").fill(testPassword("TEST_SELLER_PASSWORD"));
   await page.getByRole("button", { name: "وارد شوید" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("link", { name: "داشبورد" })).toBeVisible();
