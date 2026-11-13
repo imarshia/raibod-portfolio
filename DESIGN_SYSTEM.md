@@ -1,13 +1,13 @@
 # Raibod - Design System
 
-**Version:** 3.2 - 5 November 2026
-**Status:** Final for UI implementation. Supersedes v3.1. Approved for use by Claude Code, Daniel, and Alex.
-**Scope:** Design system only. Color, typography, spacing, icons, components, tokens, light and dark, print, accessibility, responsive, setup.
+**Version:** 3.3 - 13 November 2026
+**Status:** Final for UI implementation. Supersedes v3.2. Approved for use by Claude Code, Daniel, and Alex.
+**Scope:** Design system only. Color, typography, spacing, icons, components, tokens, light only, print, accessibility, responsive, setup.
 **Not in scope:** Product flows, roles, data model, API contract. Those are in v2.1 product specification. Send both files together. This file alone is not the whole project spec.
 **Stack:** TypeScript, React 19+, Next.js App Router, HeroUI v3.2 (pinned, see section 0), Tailwind CSS v4, PostgreSQL
 **Font:** Vazirmatn (Google Fonts, variable 100-900, arabic + latin subsets)
 **Icons:** Lucide only (lucide-react, 24x24 grid, stroke 2, sizes 16 / 20 / 24)
-**Modes:** Light + Dark (both required)
+**Modes:** Light only (owner decision, 2026-11-09). No dark mode, no theme toggle.
 **Site language:** Persian (fa)
 **Direction:** RTL (lang="fa" dir="rtl")
 **Dates in UI:** Jalali only, format YYYY/MM/DD, Latin digits, dir="ltr" on the date element
@@ -65,17 +65,9 @@ For Persian and RTL, create `app/provider.tsx` with `I18nProvider` from `@heroui
 
 The Jalali calendar mechanism is in section 5, Calendar. The calendar system comes from locale only through `I18nProvider` with the Persian calendar locale extension. Values must also be built as Jalali `CalendarDate` values, otherwise `onChange` returns Gregorian.
 
-### 0.3 Dark Mode with next-themes
+### 0.3 Light only, no theme switch
 
-Manage theme only with `next-themes`. Do not set the `.dark` class on `html` by hand.
-
-Create a client `app/providers.tsx` with `ThemeProvider as NextThemesProvider` from `next-themes` and these props: `attribute="class"`, `defaultTheme="system"`, `enableSystem`, `disableTransitionOnChange`. In the root layout, put `suppressHydrationWarning` on the `html` tag and give `body` the classes `bg-background text-foreground`.
-
-The theme switch uses `useTheme` from `next-themes` in a client component, and rendering is deferred until after mount, because the active theme is not known in SSR. `useTheme` in this setup comes from `next-themes`, not from HeroUI. For a plain React app, HeroUI docs use `useTheme` from `@heroui/react`. For Raibod Next.js, use `next-themes` only, one theme controller per app.
-
-The next-themes install command was not seen in the HeroUI Dark Mode or Theming pages. Confirm it from the next-themes docs before adding it.
-
-If class and `data-theme` are both set by hand, keep their values in sync. With `next-themes`, only `attribute="class"` is managed.
+The site is light-only (owner decision, 2026-11-09). There is no theme toggle and no dark mode. Do not install `next-themes`, do not add a `ThemeProvider`, do not set the `.dark` class on `html`, and do not read `prefers-color-scheme`. The root layout uses `forcedTheme="light"`. Dark token values in section 9 are defined for reference only and are not used.
 
 ### 0.4 AI setup for Claude Code
 
@@ -223,7 +215,7 @@ Fluid type for display, H1, H2: `clamp()`.
 
 - Spacing: 4px base grid, 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.
 - Layout: sidebar 264px (collapsible to 72px), topbar 64px, content max 1440px, page padding 24px (16px on mobile).
-- Landing header: full-width bar, height 80px + 4px padding top and bottom (88px total), content width 1312px, theme toggle (moon/sun, circular reveal) left of the booking CTA. All landing content sits within the 1312px width. Layout: logo right, nav centered (14px, gap 40px), booking CTA left. Sticky; hides on scroll down and shows on scroll up (both desktop and mobile). When scrolled, a 1px bottom border (`--border`) plus a faint shadow (`0 1px 2px rgb(0 0 0 / 0.06)`); clean at the very top. Mobile (below 1024px): fixed bar 56px + 8px padding (72px total), hamburger menu opens a modal panel over a dark backdrop.
+- Landing header: full-width bar, height 80px + 4px padding top and bottom (88px total), content width 1312px. All landing content sits within the 1312px width. Layout: logo right, nav centered (14px, gap 40px), booking CTA left. Sticky; hides on scroll down and shows on scroll up (both desktop and mobile). When scrolled, a 1px bottom border (`--border`) plus a faint shadow (`0 1px 2px rgb(0 0 0 / 0.06)`); clean at the very top. Mobile (below 1024px): fixed bar 56px + 8px padding (72px total), hamburger menu opens a modal panel over a dark backdrop.
 - Radius: `--radius: 12px`, small 8px, card 12px, field 12px, modal 16px, pill 24px. Note: the v3 default radius is larger (button and card 24px) and values are derived from `--radius`. After build, verify the rendered button radius is 12px per this file, not 24px default v3. Exception (Figma, login page only): the login button is 16px radius (Q-09); do not apply 16px to other buttons.
 - Shadow: card `0 1px 2px rgb(0 0 0 / 0.06)`, modal `0 8px 24px rgb(0 0 0 / 0.12)`.
 - Motion: 150ms (hover), 250ms (color / theme), 350ms (modal, drawer). Easing: `cubic-bezier(.22,.61,.36,1)`.
@@ -528,28 +520,26 @@ RangeCalendar, DateRangePicker, and TimeField are all in the v3 component list. 
 Slider: `Slider > Label + Slider.Output + Slider.Track > Slider.Fill + Slider.Steps + Slider.Thumb + Slider.Marks > Slider.Mark`. Props: `value` (number or number[]), `defaultValue`, `onChange`, `onChangeEnd`, `minValue` (default 0), `maxValue` (default 100), `step` (default 1), `formatOptions` (`Intl.NumberFormatOptions`), `orientation` (default `horizontal`), `isDisabled`. A range is built with an array value and several Thumbs, and each Thumb needs an `index`. Marks are only labels and do not change the value. Horizontal direction follows the RTL locale.
 Raibod: use Slider only for a numeric range such as a price range in reports. Its value is `number` or `number[]`.
 
-## 6. Light / Dark
+## 6. Light only
 
-| | Light | Dark |
-|---|---|---|
-| Background | `#FFFFFF` | `#1E1E1C` |
-| Surface | `#FFFFFF` | `#262624` |
-| Text | `#1E1E1C` | `#F5F2EF` |
-| Muted text | `#787877` | `#A5A5A4` |
-| Accent | `#13847F` | `#13847F` |
-| Accent text | `#FFFFFF` | `#FFFFFF` |
+The site is light-only (owner decision, 2026-11-09). There is no dark mode and no theme toggle.
 
-- Toggle: Lucide `Sun` in Dark / `Moon` in Light, size 20, in the topbar.
-- Default: `prefers-color-scheme` through `next-themes` with `defaultTheme="system"` and `enableSystem`; otherwise Light. Choice persists through next-themes.
-- Switch without reload, 250ms color transition, HeroUI `.dark` / `[data-theme="dark"]` on `<html>`. The internal light and dark themes react to both the `.light` and `.dark` classes and the `data-theme="light"` and `data-theme="dark"` attributes. If both are set by hand, keep their values in sync.
-- Frame photo area stays `#F5F2EF` in both modes. Print is always light (A4).
-- What does not change in Dark: typography (size, weight, line-height), radius, spacing, layout, icons, and the red now-line in the calendar. Only color changes.
-- Combine the two Providers in one client provider file: the `I18nProvider` from section 0.2 and the `NextThemesProvider` from section 0.3. The docs pages that were read do not show the order for combining them. Confirm the order in code.
-- Body must always have `bg-background text-foreground` in the root layout, so the page canvas changes with the theme.
+| | Light |
+|---|---|
+| Background | `#FFFFFF` |
+| Surface | `#FFFFFF` |
+| Text | `#1E1E1C` |
+| Muted text | `#787877` |
+| Accent | `#13847F` |
+| Accent text | `#FFFFFF` |
+
+- Frame photo area stays `#F5F2EF`. Print is always light (A5).
+- Body must always have `bg-background text-foreground` in the root layout.
+- Dark token values in section 9 are defined for reference only and are not used.
 
 ## 7. Print
 
-Print is always light, A4, no sidebar, no topbar, no dark mode.
+Print is always light, A5, no sidebar, no topbar, no dark mode.
 
 - Header: "عینک رایبد" + phone 09120987790.
 - Content only: prescription or invoice, with tables and borders.
@@ -688,16 +678,16 @@ Use this checklist before any UI is sent to Claude Code or merged.
 
 - [ ] File is `DESIGN_SYSTEM.md` in the repo root, and only tokens from section 9 are used. No raw hex. No numeric accent classes.
 - [ ] HeroUI version is pinned in `package.json`. Switch, Checkbox, RadioGroup, and calendar week/day composition match the pinned version.
-- [ ] No `HeroUIProvider` exists. `I18nProvider` with locale `fa` is in `app/provider.tsx`. Theme is managed only with `next-themes`, `defaultTheme="system"`, `enableSystem`, `suppressHydrationWarning` on `html`.
+- [ ] No `HeroUIProvider` exists. `I18nProvider` with locale `fa` is in `app/provider.tsx`. The site is light-only; no theme provider, no `next-themes`, no `suppressHydrationWarning` for theme.
 - [ ] All text sizes are from the 1.25 scale. No off-scale sizes. Rendered button radius is 12px, not the v3 default 24px.
 - [ ] UI is Persian, RTL, `lang="fa" dir="rtl"`. Dates are Jalali YYYY/MM/DD with Latin digits. Calendar uses `I18nProvider` with the Persian calendar extension and Jalali `CalendarDate` values. `firstDayOfWeek="sat"`. No fixed `weeksInMonth` for Jalali months.
 - [ ] Numbers, prices, and codes are Latin digits with `tnum`, `dir="ltr"`.
-- [ ] Light and Dark are checked for every page. Forbidden combinations are absent: `#787877` text in Dark.
+- [ ] Light is checked for every page. The site is light-only; no Dark check.
 - [ ] One Primary per view. Focus is visible. Touch target is at least 44px.
 - [ ] Tabs use `variant="secondary"` with `Tabs.ListContainer`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel` and matching `id`. Status uses `Chip` with `variant="soft"`, not Badge. Cancel and delete use AlertDialog, not a plain Modal.
 - [ ] Drawer width is set with `className`, not with a size prop. Drawer placement is explicit. Toast root has `<Toast.Provider />` with placement `bottom` and max 3 toasts.
 - [ ] Table, form, modal, toast, calendar, and print match sections 5, 7, and 8. Form is inside `<Form validationBehavior="native">`. Pagination is in `Table.Footer`. Selection uses a `Checkbox` with `slot="selection"`.
-- [ ] Print is light A4, no sidebar, no topbar.
+- [ ] Print is light A5, no sidebar, no topbar.
 - [ ] Status is shown with text label, not color alone. Error is shown with icon and text, not color alone.
 - [ ] No online shop, public catalog, or cart was built. That rule comes from the product spec, and this design system does not change it.
 - [ ] MCP server and agent skill from section 0.4 are installed before Claude Code builds, and heroui.com is the API reference.
@@ -710,7 +700,7 @@ Use this checklist before any UI is sent to Claude Code or merged.
 - Language: Persian, RTL, fixed locale `fa` through `I18nProvider`.
 - Font: Vazirmatn.
 - Icons: Lucide only.
-- Modes: Light and Dark, both required, managed with `next-themes`.
+- Modes: Light only, no theme toggle, no dark mode.
 - Stack: TypeScript, React 19+, Next.js App Router, HeroUI v3.2 pinned, Tailwind CSS v4, PostgreSQL.
 - Tabs: `variant="secondary"`. Status: `Chip` with `variant="soft"`. Sensitive confirmations: AlertDialog. Drawer: stable, no size prop, width with `className`.
 - Toast: `<Toast.Provider />` in root, placement `bottom`, max 3, timeout 4000ms.
@@ -728,7 +718,6 @@ These do not block UI work with this design system, but must be confirmed before
 - Latin digits in DateField under the fa locale. Verify in code whether a numbering system setting is needed.
 - Exact placement of `isOpen` on Modal. The API table and the hooks example differ. Confirm with the installed version.
 - Switch composition in the docs page. The Switch page still shows the old composition and conflicts with the v3.2.0 release note. Confirm with the pinned version.
-- next-themes install command. Confirm from the next-themes docs.
 - Props for Link, Separator, Avatar, Meter, Disclosure, Kbd. Their dedicated pages returned 429 in the review. Only their existence in the component list was confirmed. Read them before v3.2 code that uses them.
 - Latest HeroUI patch number. Confirm from npm or the releases page before install.
 - Button automatic spinner. Not confirmed on the Button docs page. Verify with the installed version.
@@ -741,6 +730,7 @@ These do not block UI work with this design system, but must be confirmed before
 
 ## Changelog
 
+- v3.3, 13 November 2026: Light-only (owner decision, 2026-11-09). Removed the theme toggle, the Dark Mode with next-themes section, and the Light/Dark behavior section; print is A5, not A4. Dark token values are kept for reference only and are not used.
 - v3.2, 5 November 2026: Based on v3.1 Final and a full HeroUI docs review. Added install commands and PostCSS, no HeroUIProvider, I18nProvider with fixed fa locale, Dark Mode with next-themes, Jalali calendar mechanism, version pin, token mapping to standard HeroUI names, forbidden v2 patterns table, AlertDialog, full Toast and Drawer and Dropdown and Alert APIs, Form, Fieldset, DateField, InputGroup, Card, Surface, ListBox, EmptyState, calendar week and day views, exact Select and Autocomplete and ComboBox compositions, Link and Separator and Avatar and Meter and Disclosure and DateRangePicker and TimeField and Slider, BEM customization, body classes, reduced motion and scrollbar tokens, MCP and agent skill setup, and an unverified items list. Fixed v3.1 errors: Tabs variant is secondary not Underline, Badge is not a standalone status label, use Chip, Drawer is stable not rc and has no size prop, Modal isOpen placement is unverified, Toast has no info variant, Button automatic spinner is unconfirmed, rowHeight belongs to the Virtualizer, Switch and Checkbox and RadioGroup follow the v3.2 composition.
 - v3.1 Final, 5 November 2026: Based on v3.0. Added RTL and Jalali specification, finalized status colors, added breakpoints, print specification, accessibility section, expanded components (Select, Toast, Tabs, Pagination, Switch, Checkbox, RadioGroup, Alert, Breadcrumbs, Dropdown, Skeleton), file structure, usage rules, acceptance checklist, and closed decisions list.
 - v3.0, 5 November 2026: Tokens and HeroUI v3 components. Background white. Status colors were proposal.
