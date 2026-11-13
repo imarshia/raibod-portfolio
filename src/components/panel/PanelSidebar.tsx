@@ -83,13 +83,15 @@ const ITEM_BASE =
 const ITEM_SELECTED =
   "rounded-[8px_0_0_8px] bg-[#E6E8E8] text-accent shadow-[inset_-2px_0_0_var(--accent)]";
 
-// The mobile drawer uses a 4px icon-text gap, 14px font and 20px
-// icons; the desktop sidebar uses 8px gap, 16px font and 24px icons
-// (Figma). The gap/font/icon are props so the menu stays defined once.
+// The icon-text gap is 4px and the font is 14px (Figma Body-sm) in
+// both the desktop sidebar and the mobile drawer (owner decision
+// 2026-11-13). Only the icons differ: 20px in the drawer, 24px on
+// desktop. The gap/font are constants, not props, so the menu stays
+// defined once.
 function PanelMenu({ compact = false }: { compact?: boolean }) {
   const pathname = usePathname();
-  const gap = compact ? "gap-1" : "gap-2";
-  const text = compact ? "text-sm leading-6" : "text-base leading-7";
+  const gap = "gap-1";
+  const text = "text-sm leading-6";
   const iconSize = compact ? 20 : 24;
   const iconClass = compact ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0";
   return (
@@ -135,8 +137,9 @@ function PanelMenu({ compact = false }: { compact?: boolean }) {
 // (300px, full height, border on the edge facing main) or the mobile
 // drawer (fixed, slides in from the right). asideLabel is set only
 // for the drawer, which the task requires to carry aria-label "منو".
-// compact renders the mobile 4px icon-text gap, 14px font and 20px
-// icons; desktop uses 8px gap, 16px font and 24px icons.
+// compact renders the mobile 20px icons; desktop uses 24px icons.
+// The icon-text gap (4px) and font (14px, Figma Body-sm) are the
+// same in both (owner decision 2026-11-13).
 // onClose renders the close button INSIDE the drawer (Figma: the
 // CloseButton is part of the drawer SVG, 24x24, radius 12, left
 // 17px, top 24px, X icon 16px, 1.5px stroke). It is only set for
