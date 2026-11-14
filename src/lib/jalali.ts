@@ -112,7 +112,7 @@ export function parseJalaliInput(value: string): Date | null {
 }
 
 // Jalali month names, for the date-filter modal and the active
-// filter chips ("1405 آبان 10", "از 1405 آبان 10 تا 1405 آبان 15").
+// filter chips ("20 آبان 1405", "از 20 آبان 1405 تا 22 آبان 1405").
 export const JALALI_MONTH_NAMES = [
   "فروردین",
   "اردیبهشت",
@@ -128,8 +128,13 @@ export const JALALI_MONTH_NAMES = [
   "اسفند",
 ];
 
+// A Jalali date in words, day first ("20 آبان 1405"). Day first is
+// the Persian reading order; year first ("1405 آبان 20") renders the
+// wrong way round in the chip (owner correction 2026-11-14, with a
+// screenshot). Applies to the range chip, the single-day chip and
+// the modal selection line alike.
 export function formatJalaliLong(jy: number, jm: number, jd: number): string {
-  return `${jy} ${JALALI_MONTH_NAMES[jm - 1]} ${jd}`;
+  return `${jd} ${JALALI_MONTH_NAMES[jm - 1]} ${jy}`;
 }
 
 // The UTC range of one Jalali day in Asia/Tehran, [start, end).

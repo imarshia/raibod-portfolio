@@ -78,9 +78,14 @@
   cursor: pointer;
   padding: 0 16px;
 }
+/* The chevron on the left of the user filter button. It is a Lucide
+   ChevronDown, rendered at its natural 16px so it reads as a
+   dropdown indicator. (Was 8x4 from the preview, which squished the
+   24x24 icon into a flat, near-invisible mark; owner correction
+   2026-11-14: a visible downward chevron on the left.) */
 .user-filter svg {
-  width: 8px;
-  height: 4px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 
