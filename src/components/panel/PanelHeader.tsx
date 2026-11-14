@@ -2,11 +2,16 @@
 // Desktop (>= 1024px, 97px): role label above "{fullName}؛ خوش آمدید" on the
 // right, Jalali weekday + date and the bell on the left.
 // Mobile (< 1024px, 77px): hamburger + bell on the left, role label above the
-// welcome text (16px bold) on the right, no date.
+// welcome text on the right, no date.
 // One header with responsive classes (R-10): the welcome text, the bell and
 // the hamburger exist once in the DOM, so no test or screen reader ever
 // sees them twice. The date shows on desktop only; the hamburger shows
 // on mobile only. The visual result at each breakpoint is unchanged.
+// Welcome block (Figma Frame 37, owner 2026-11-14, both viewports):
+// flex column, gap 4px, items flex-end, justify center; role 12px
+// weight 500 line-height 16px muted; name 16px weight 600
+// line-height 24px foreground. (Replaces the earlier 14px/#333 role
+// and the 20px desktop name.)
 // The bell is decorative for now: there is no notification backend (the Figma
 // comment defines its future trigger as a new online booking, in
 // real time). Buttons are native elements, not HeroUI Button: the
@@ -49,9 +54,9 @@ export function PanelHeader({
 
   return (
     <header className="flex h-[77px] shrink-0 items-center justify-between border-b border-border bg-background px-4 lg:h-[97px] lg:px-8">
-      <div className="text-right">
-        <p className="text-sm leading-6 text-[#333333]">{roleLabel}</p>
-        <p className="text-base font-bold leading-6 text-foreground lg:text-xl lg:leading-7">
+      <div className="flex flex-col items-end justify-center gap-1 text-right">
+        <p className="text-xs font-medium leading-4 text-muted">{roleLabel}</p>
+        <p className="text-base font-semibold leading-6 text-foreground">
           {user.fullName}؛ خوش آمدید
         </p>
       </div>
