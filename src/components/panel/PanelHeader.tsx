@@ -12,6 +12,11 @@
 // weight 500 line-height 16px muted; name 16px weight 600
 // line-height 24px foreground. (Replaces the earlier 14px/#333 role
 // and the 20px desktop name.)
+// RTL note: the Figma frame is LTR, where flex-end right-aligns.
+// This page is RTL, so for a column container flex-end means the
+// LEFT edge and flex-start means the RIGHT edge; items-start is
+// what right-aligns the role line here (owner correction 2026-11-14,
+// the role had drifted to the left).
 // The bell is decorative for now: there is no notification backend (the Figma
 // comment defines its future trigger as a new online booking, in
 // real time). Buttons are native elements, not HeroUI Button: the
@@ -54,7 +59,7 @@ export function PanelHeader({
 
   return (
     <header className="flex h-[77px] shrink-0 items-center justify-between border-b border-border bg-background px-4 lg:h-[97px] lg:px-8">
-      <div className="flex flex-col items-end justify-center gap-1 text-right">
+      <div className="flex flex-col items-start justify-center gap-1 text-right">
         <p className="text-xs font-medium leading-4 text-muted">{roleLabel}</p>
         <p className="text-base font-semibold leading-6 text-foreground">
           {user.fullName}؛ خوش آمدید
