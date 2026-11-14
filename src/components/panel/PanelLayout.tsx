@@ -8,6 +8,12 @@
 // Owns the drawer state: scroll lock while open, Escape closes it
 // and returns focus to the hamburger, resizing to desktop closes it.
 // The shell is light-only and uses Design System tokens throughout.
+// Content padding (owner decision 2026-11-14, in his words: the
+// content section, whose content varies by the selected menu item,
+// has 32px padding left/right, 8px on mobile, 24px from the top):
+// the <main> carries px-2 pt-6 (mobile) and lg:px-8 (desktop).
+// The bottom padding (10px mobile, 17px desktop) is from the
+// approved logs preview, so content never touches the page bottom.
 
 "use client";
 
@@ -83,7 +89,9 @@ export function PanelLayout({
           drawerOpen={drawerOpen}
           menuButtonRef={menuButtonRef}
         />
-        <main className="flex-1 bg-background">{children}</main>
+        <main className="flex-1 bg-background px-2 pb-2.5 pt-6 lg:px-8 lg:pb-[17px]">
+          {children}
+        </main>
       </div>
 
       {/* Mobile drawer: backdrop, drawer, close button. */}
