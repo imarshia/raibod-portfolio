@@ -15,7 +15,17 @@ export async function POST(request: NextRequest) {
     mobile?: string;
     password?: string;
   } | null;
-  if (!body?.mobile || !body?.password) {
+  // J-1: the type must be checked too, not just emptiness. A
+  // non-string value (a JSON number for the password, for example)
+  // is malformed input and gets 400; it must not count as a failed
+  // attempt and burn the lockout, and a non-string mobile must not
+  // throw on .trim() and come back as 503.
+  if (
+    typeof body?.mobile !== "string" ||
+    typeof body?.password !== "string" ||
+    !body.mobile ||
+    !body.password
+  ) {
     return NextResponse.json({ error: "mobile and password required" }, { status: 400 });
   }
   try {
