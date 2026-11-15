@@ -21,5 +21,8 @@ export async function POST(request: NextRequest) {
     // Logging must never block logout.
   }
   await destroySession();
-  return NextResponse.redirect(new URL("/login", request.url));
+  // J-3: 307 keeps the method, so the browser would POST to /login
+  // and get 405 (the login page only has GET). 303 is the
+  // POST-Redirect-GET pattern: the browser continues with GET.
+  return NextResponse.redirect(new URL("/login", request.url), 303);
 }
