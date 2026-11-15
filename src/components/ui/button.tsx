@@ -1,4 +1,4 @@
-// components/ui/button.tsx: Raibod Button wrapper (Design System v3.2 section 5).
+// components/ui/button.tsx: Raibod Button wrapper (Design System v3.3 section 5).
 // HeroUI v3 Button. Raibod mapping: Primary = accent, Secondary = ink,
 // Tertiary = surface-2, Danger = delete / cancel with confirmation.
 // One Primary per view. No v2 patterns: variant only (no color prop),

@@ -1,5 +1,5 @@
 // app/providers.tsx is the single combined client provider file.
-// Design System v3.2 sections 0.3 and 6: theme is managed only with
+// Design System v3.3 sections 0.3 and 6: theme is managed only with
 // next-themes (attribute="class"). Light mode only, by owner decision
 // 2026-11-09 (the dark/light toggle was removed from the landing page):
 // defaultTheme="light", enableSystem={false}, and forcedTheme="light"

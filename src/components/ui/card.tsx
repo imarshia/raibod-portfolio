@@ -1,4 +1,4 @@
-// components/ui/card.tsx: Raibod Card and Surface (Design System v3.2 section 5).
+// components/ui/card.tsx: Raibod Card and Surface (Design System v3.3 section 5).
 // Card: variant="default" (shown with surface-secondary per the docs).
 // Surface: panels and surfaced containers; put forms inside it with
 // variant="secondary". No product logic lives in components/ui.

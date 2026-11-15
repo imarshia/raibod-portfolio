@@ -1,4 +1,4 @@
-/* src/app/(panel)/dashboard/activity/activity.css: the activity log page.
+/* src/components/panel/activity-log.css: the activity log page.
    Exact values from the approved logs preview (Alex, 2026-11-14),
    itself measured from the Figma Logs node (231:19206). The template
    (PanelLayout <main>) already carries the content padding (32px

@@ -1,4 +1,4 @@
-// components/ui/alert.tsx: Raibod Alert (Design System v3.2 section 5).
+// components/ui/alert.tsx: Raibod Alert (Design System v3.3 section 5).
 // Compound: Alert + Alert.Indicator + Alert.Content + Alert.Title +
 // Alert.Description. status: default | accent | success | warning | danger.
 // There is no info variant: use status="accent" for information.
