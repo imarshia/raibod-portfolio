@@ -78,8 +78,12 @@ function isItemActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+// R-16: menu geometry from Figma (Dashboard D/D-1, measured
+// pixel by pixel 2026-11-14): items 40px tall, nav gap 4px, and the
+// divider carries margin-top 3px so it lands at y=343 and the sixth
+// item at 348. Desktop and mobile share this base and nav.
 const ITEM_BASE =
-  "flex h-11 w-full items-center px-6 py-2 text-[#333333] transition-colors";
+  "flex h-10 w-full items-center px-6 py-2 text-[#333333] transition-colors";
 const ITEM_SELECTED =
   "rounded-[8px_0_0_8px] bg-[#E6E8E8] text-accent shadow-[inset_-2px_0_0_var(--accent)]";
 
@@ -95,11 +99,11 @@ function PanelMenu({ compact = false }: { compact?: boolean }) {
   const iconSize = compact ? 20 : 24;
   const iconClass = compact ? "h-5 w-5 shrink-0" : "h-6 w-6 shrink-0";
   return (
-    <nav className="flex flex-1 flex-col gap-4">
+    <nav className="flex flex-1 flex-col gap-1">
       {MENU_ITEMS.map((item) => {
         const Icon = item.icon;
         const divider = item.type === "link" && item.dividerBefore && (
-          <div key={`divider-${item.href}`} className="h-px w-full bg-border" role="separator" />
+          <div key={`divider-${item.href}`} className="mt-[3px] h-px w-full bg-border" role="separator" />
         );
         if (item.type === "logout") {
           return (
