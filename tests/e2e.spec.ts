@@ -50,22 +50,31 @@ test("booking shell states online booking opens later and shows the phone", asyn
   await expect(page.getByText("09120987790")).toBeVisible();
 });
 
-test("landing is light-only with no theme toggle", async ({ page }) => {
+test("landing has a theme toggle and switches to dark mode", async ({ page }) => {
+  // Design System v3.4 (portfolio, 2026-11-18): Light + Dark. The
+  // theme toggle was restored to the landing header (it was removed
+  // in aad8cd0 when the site went light-only); the old light-only
+  // assertion is superseded. The toggle flips the theme, and the
+  // stored preference survives a reload.
   await page.goto("/");
-  // The theme toggle was removed by the owner (2026-11-09); the site is
-  // light-only. No toggle button exists, and <html> never gets the
-  // "dark" class. This is the LES-001 case: the test must match the
-  // current UI, not the old toggle.
-  await expect(page.getByRole("button", { name: "تم تیره" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "تم روشن" })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "تم تیره" }),
+  ).toHaveCount(1);
   await expect(page.locator("html")).not.toHaveClass(/dark/);
-  // Even with a stored dark preference, the site stays light (the
-  // provider forces light; a stored value must not re-apply dark).
+  await page.getByRole("button", { name: "تم تیره" }).click();
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await expect(
+    page.getByRole("button", { name: "تم روشن" }),
+  ).toHaveCount(1);
+  await page.getByRole("button", { name: "تم روشن" }).click();
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
+  // A stored dark preference re-applies after a reload.
   await page.evaluate(() => localStorage.setItem("raibod-theme", "dark"));
   await page.reload();
-  await expect(page.locator("html")).not.toHaveClass(/dark/);
-  await expect(page.getByRole("button", { name: "تم تیره" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "تم روشن" })).toHaveCount(0);
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await expect(
+    page.getByRole("button", { name: "تم روشن" }),
+  ).toHaveCount(1);
 });
 
 test("login field radius is 12px per the Design System", async ({ page }) => {
