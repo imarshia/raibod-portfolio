@@ -15,22 +15,22 @@
 
 :root {
   --background: #FFFFFF;
-  --foreground: #1E1E1C;
+  --foreground: #191919;
   --surface: #FFFFFF;
   --surface-2: #F5F2EF;
   --surface-secondary: #F5F2EF;
   --muted: #787877;
   --border: #E6E8E8;
-  --accent: #13847F;
+  --accent: #C2410C;
   --accent-foreground: #FFFFFF;
-  --accent-hover: #10706C;
-  --accent-soft: #E7F3F2;
-  --accent-text: #0D5C59;
+  --accent-hover: #9A3412;
+  --accent-soft: #FFEDD5;
+  --accent-text: #7C2D12;
   --field: #FFFFFF;
   --field-background: #FFFFFF;
   --field-hover: #F5F2EF;
   --field-focus: #FFFFFF;
-  --focus: #13847F;
+  --focus: #C2410C;
   --danger: #B91C1C;
   --success: #2E7D32;
   --warning: #B45309;
@@ -40,23 +40,23 @@
 }
 
 .dark, [data-theme="dark"] {
-  --background: #1E1E1C;
+  --background: #191919;
   --foreground: #F5F2EF;
   --surface: #262624;
   --surface-2: #2E2E2C;
   --surface-secondary: #2E2E2C;
   --muted: #A5A5A4;
   --border: #3A3A38;
-  --accent: #13847F;
+  --accent: #C2410C;
   --accent-foreground: #FFFFFF;
-  --accent-hover: #10706C;
-  --accent-soft: #0A4946;
-  --accent-text: #89C2BF;
+  --accent-hover: #9A3412;
+  --accent-soft: #431407;
+  --accent-text: #FDBA74;
   --field: #262624;
   --field-background: #262624;
   --field-hover: #2E2E2C;
   --field-focus: #262624;
-  --focus: #89C2BF;
+  --focus: #FDBA74;
   --danger: #F87171;
   --success: #4ADE80;
   --warning: #FBBF24;
@@ -99,7 +99,7 @@ body {
   font-family: var(--font-sans);
 }
 
-/* Design System v3.3 section 9: the design radius is 0.75rem (12px).
+/* Design System v3.4 section 9: the design radius is 0.75rem (12px).
    HeroUI v3 buttons default to rounded-3xl (24px). This override forces
    the DS radius on buttons only; other components keep the HeroUI scale
    until the Design System defines their radii. Verified by computed style
@@ -188,7 +188,7 @@ input:-webkit-autofill:active {
     display: none !important;
   }
   @page {
-    size: A5;
+    size: A4;
     margin: 12mm;
   }
 }
