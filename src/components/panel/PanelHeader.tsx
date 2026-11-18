@@ -22,11 +22,19 @@
 // real time). Buttons are native elements, not HeroUI Button: the
 // Figma geometry is exact 40x40 with a 16px bell radius, and the
 // global .button override forces 12px on HeroUI buttons.
+// Design System v3.4: Light + Dark (portfolio decision, Arshia
+// 2026-11-18). The topbar buttons use bg-surface-2 (a token) instead
+// of the Figma #EBEBEC, so the icon (text-foreground) stays visible
+// in Dark; #EBEBEC with a light icon would be invisible on dark.
+// The date uses text-foreground for the same reason (#333333 would
+// be unreadable in Dark). The theme toggle (Sun in Dark / Moon in
+// Light, size 20, DS section 6) sits next to the bell.
 
 "use client";
 
-import type { RefObject } from "react";
-import { Bell, Menu } from "lucide-react";
+import { useEffect, useState, type RefObject } from "react";
+import { Bell, Menu, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { todayJalaliHeaderLatin } from "@/lib/jalali";
 
 type PanelHeaderProps = {
@@ -41,9 +49,34 @@ function BellButton() {
     <button
       type="button"
       aria-label="اعلان‌ها"
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[#EBEBEC] text-foreground"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-surface-2 text-foreground"
     >
       <Bell size={16} strokeWidth={1.33} aria-hidden="true" />
+    </button>
+  );
+}
+
+function ThemeToggle() {
+  // The active theme is not known during SSR, so the icon is rendered
+  // only after mount (DS section 0.3). Before mount the button keeps
+  // its 40x40 size so the header does not shift.
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isDark = mounted && resolvedTheme === "dark";
+  return (
+    <button
+      type="button"
+      aria-label={isDark ? "تم روشن" : "تم تیره"}
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-surface-2 text-foreground"
+    >
+      {mounted &&
+        (isDark ? (
+          <Sun size={20} aria-hidden="true" />
+        ) : (
+          <Moon size={20} aria-hidden="true" />
+        ))}
     </button>
   );
 }
@@ -66,7 +99,7 @@ export function PanelHeader({
         </p>
       </div>
       <div className="flex items-center gap-2 lg:gap-4">
-        <div className="hidden text-left text-sm leading-6 text-[#333333] lg:block">
+        <div className="hidden text-left text-sm leading-6 text-foreground lg:block">
           <p>{weekday}</p>
           <p>{date}</p>
         </div>
@@ -76,10 +109,11 @@ export function PanelHeader({
           aria-label={drawerOpen ? "بستن منو" : "باز کردن منو"}
           aria-expanded={drawerOpen}
           onClick={onMenuClick}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-[#EBEBEC] text-foreground lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-surface-2 text-foreground lg:hidden"
         >
           <Menu size={16} strokeWidth={1.33} aria-hidden="true" />
         </button>
+        <ThemeToggle />
         <BellButton />
       </div>
     </header>

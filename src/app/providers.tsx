@@ -1,15 +1,15 @@
 // app/providers.tsx is the single combined client provider file.
-// Design System v3.3 sections 0.3 and 6: theme is managed only with
-// next-themes (attribute="class"). Light mode only, by owner decision
-// 2026-11-09 (the dark/light toggle was removed from the landing page):
-// defaultTheme="light", enableSystem={false}, and forcedTheme="light"
-// so the site always renders light, even if a "dark" value was stored
-// earlier under storageKey "raibod-theme" (a stored value would win
-// over defaultTheme on its own). Order, confirmed in code:
-// NextThemesProvider outermost (it owns the class on <html>), then
-// I18nProvider (locale context for React Aria components), then
-// Toast.Provider. Both orders render, but this order keeps theme
-// control outermost.
+// Design System v3.4 sections 0.3 and 6: theme is managed only with
+// next-themes (attribute="class"). Light + Dark, both required
+// (portfolio decision, Arshia 2026-11-18; this supersedes the
+// light-only decision 2026-11-09, which stays in force for the
+// original Raibod repo): defaultTheme="system", enableSystem, and
+// no forcedTheme, so the site follows the system theme by default
+// and the toggle in the panel header can switch it. Order,
+// confirmed in code: NextThemesProvider outermost (it owns the
+// class on <html>), then I18nProvider (locale context for React
+// Aria components), then Toast.Provider. Both orders render, but
+// this order keeps theme control outermost.
 
 "use client";
 
@@ -36,9 +36,8 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="light"
-      enableSystem={false}
-      forcedTheme="light"
+      defaultTheme="system"
+      enableSystem
       disableTransitionOnChange
       storageKey="raibod-theme"
     >

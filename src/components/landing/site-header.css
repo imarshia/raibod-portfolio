@@ -14,8 +14,14 @@
    geometry comes from Figma. The mobile spacer replaces the sample's
    body padding-top: it reserves the fixed bar's 72px in the landing
    flow without touching <body> (which is shared by every route).
-   Light mode only: the theme toggle was removed by owner decision
-   2026-11-09, and the provider forces light (see providers.tsx). */
+   Theme toggle: circular reveal expanding from the toggle button,
+   via the View Transitions API, with an instant fallback. Design
+   System v3.4 (portfolio): Light + Dark, toggle restored 2026-11-18
+   after the light-only removal (aad8cd0, 2026-11-09). */
+
+/* View Transitions: no default fade, the reveal is drawn by JS. */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* ---------- shared pieces ---------- */
 .logo img { width: 76px; height: 56px; }
@@ -34,6 +40,21 @@
   transition: background-color 0.2s ease;
 }
 .cta:hover { background: var(--accent-hover); }
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  color: var(--foreground);
+  transition: background-color 0.2s ease;
+}
+.theme-toggle svg { width: 12px; height: 12px; }
+.theme-toggle .icon-sun { display: none; }
+:root.dark .theme-toggle .icon-moon { display: none; }
+:root.dark .theme-toggle .icon-sun { display: block; }
 
 /* ---------- desktop header ---------- */
 .site-header { display: block; position: sticky; top: 0; z-index: 50; padding-top: 4px; padding-bottom: 4px; background: var(--background); transition: transform 0.35s ease, background-color 0.3s ease, box-shadow 0.3s ease; will-change: transform; }

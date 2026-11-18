@@ -1,5 +1,5 @@
 // app/provider.tsx owns the I18nProvider with a fixed Persian locale.
-// Design System v3.3 section 0.2: no HeroUIProvider in HeroUI v3.
+// Design System v3.4 section 0.2: no HeroUIProvider in HeroUI v3.
 // The locale is fixed "fa-u-nu-latn" (Arshia's decision, 2026-11-07):
 // the Jalali calendar stays, but date digits render Latin. Verified:
 // Intl.DateTimeFormat("fa-u-nu-latn").resolvedOptions() gives calendar
