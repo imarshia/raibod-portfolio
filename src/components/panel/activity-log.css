@@ -5,9 +5,13 @@
    desktop / 8px mobile, 24px top, owner decision 2026-11-14), so
    this file starts at the content header. Only the page-size menu
    opens upward (its button sits at the page bottom); the user menu
-   opens downward. Design System tokens are used where the value
-   matches; Figma-only values (chip, red dot, footer gray, row
-   separator at 50%) are written out here, not invented into tokens. */
+   opens downward. Colours are Design System tokens (DS v3.4
+   portfolio, dark mode): the Figma-only values (chip #EBEBEC, red
+   dot #FF383C, footer gray #71717A, row separator #CDCDCE at 50%,
+   text #333333/#18181B) are mapped to the matching tokens
+   (surface-2, danger, muted, border, foreground) so the page reads
+   in Dark as well as Light. The calendar icon was the old teal
+   #0D5C59; it is now accent-text. */
 
 .logs-head {
   display: flex;
@@ -41,8 +45,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 16px;
-  background: #ebebec;
-  color: #0d5c59;
+  background: var(--surface-2);
+  color: var(--accent-text);
   border: none;
   cursor: pointer;
   padding: 0;
@@ -58,7 +62,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #ff383c;
+  background: var(--danger);
 }
 
 /* User filter: 211x40 desktop (162px mobile), background #F5F2EF,
@@ -106,8 +110,8 @@
   align-items: center;
   gap: 6px;
   border-radius: 14px;
-  background: #ebebec;
-  color: #18181b;
+  background: var(--surface-2);
+  color: var(--foreground);
   font-size: 14px;
   line-height: 24px;
   border: none;
@@ -138,7 +142,7 @@
   align-items: flex-start;
   justify-content: space-between;
   padding: 0 16px;
-  border-bottom: 1px solid rgba(205, 205, 206, 0.5);
+  border-bottom: 1px solid var(--border);
 }
 .row-text {
   padding-top: 11px;
@@ -175,7 +179,7 @@
   padding: 0 16px;
   font-size: 14px;
   line-height: 24px;
-  color: #71717a;
+  color: var(--muted);
 }
 .size-wrap {
   position: relative;
@@ -192,7 +196,7 @@
   background: var(--background);
   border: 1px solid var(--border);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
-  color: #18181b;
+  color: var(--foreground);
   font-size: 14px;
   line-height: 24px;
   cursor: pointer;
@@ -290,7 +294,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: #ebebec;
+  background: var(--surface-2);
   color: var(--foreground);
   border: none;
   cursor: pointer;
@@ -320,7 +324,7 @@
   border-radius: 8px;
   cursor: pointer;
   background: transparent;
-  color: #333333;
+  color: var(--foreground);
   font-size: 14px;
   font-weight: 500;
   line-height: 24px;
@@ -405,7 +409,7 @@
   background: var(--surface-2);
 }
 .cal-day:disabled {
-  color: #b9b9b8;
+  color: var(--muted);
   cursor: default;
 }
 .cal-day.today {
@@ -469,7 +473,7 @@
   border-radius: 12px;
   font-size: 14px;
   line-height: 24px;
-  color: #333333;
+  color: var(--foreground);
   text-align: center;
 }
 .selection-line:empty {
@@ -518,7 +522,7 @@
 }
 .btn-ghost {
   background: transparent;
-  color: #333333;
+  color: var(--foreground);
 }
 .btn-ghost:hover:not(:disabled) {
   background: var(--surface-2);
@@ -528,7 +532,7 @@
   color: var(--danger);
 }
 .btn-danger-ghost:hover {
-  background: #fdecec;
+  background: var(--surface-2);
 }
 
 /* Empty state (no rows): a plain centered line, Design System text. */

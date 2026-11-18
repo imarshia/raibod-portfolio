@@ -9,7 +9,7 @@
 // not page navigation: the page always shows the newest N entries
 // (owner confirmation 2026-11-14; the approved preview has no page
 // number). Dates are Jalali with time, Latin digits, dir="ltr"
-// (Design System v3.3 section 2). The page renders inside the panel
+// (Design System v3.4 section 2). The page renders inside the panel
 // shell (sidebar + header) from the (panel) layout; it has no header
 // of its own.
 

@@ -112,7 +112,10 @@ export function LoginForm({ redirectTo = "/dashboard" }: { redirectTo?: string }
         <h1 className="text-center text-2xl font-bold text-foreground">
           ورود به پنل
         </h1>
-        <p className="mt-3 text-center text-sm text-[#333333]">
+        {/* Subtitle: DS muted (light #787877 / dark #A5A5A4). The Figma
+            #333333 is unreadable on the dark card, so it is replaced by
+            the muted token (DS v3.4 portfolio, dark mode). */}
+        <p className="mt-3 text-center text-sm text-muted">
           شماره موبایل و رمز عبور خود را وارد کنید.
         </p>
         <form onSubmit={submit} className="mt-10" noValidate>
@@ -192,13 +195,18 @@ export function LoginForm({ redirectTo = "/dashboard" }: { redirectTo?: string }
           </button>
         </form>
       </div>
-      <p className="absolute bottom-[11px] left-[calc(50%-156px)] h-3 w-[312px] text-right font-['Inter',sans-serif] text-[10px] font-light leading-3 text-surface-2">
+      {/* Signature: text on the accent page background, which is #C2410C
+          in both modes, so the text must stay light in both modes.
+          text-accent-foreground is #FFFFFF in Light and Dark. The old
+          text-surface-2 was #F5F2EF in Light but #2E2E2C in Dark
+          (unreadable on orange). DS v3.4 portfolio, dark mode. */}
+      <p className="absolute bottom-[11px] left-[calc(50%-156px)] h-3 w-[312px] text-right font-['Inter',sans-serif] text-[10px] font-light leading-3 text-accent-foreground">
         A Product By{" "}
         <a
           href="https://arshiasdrl.ir"
           target="_blank"
           rel="noopener"
-          className="text-surface-2 no-underline"
+          className="text-accent-foreground no-underline"
         >
           Arshiasdrl
         </a>{" "}

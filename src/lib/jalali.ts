@@ -30,7 +30,7 @@ export function todayJalali(): string {
   return formatJalali(new Date());
 }
 
-// Design System v3.3 section 2: dates in the UI are Jalali, format
+// Design System v3.4 section 2: dates in the UI are Jalali, format
 // YYYY/MM/DD, Latin digits, dir="ltr". formatJalali above predates the
 // Design System and returns Persian digits; it is kept for reference only.
 // UI display uses this Latin-digit formatter.

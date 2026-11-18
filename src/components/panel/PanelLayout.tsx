@@ -7,7 +7,8 @@
 // right over a 20% black backdrop).
 // Owns the drawer state: scroll lock while open, Escape closes it
 // and returns focus to the hamburger, resizing to desktop closes it.
-// The shell is light-only and uses Design System tokens throughout.
+// The shell uses Design System tokens throughout (Light + Dark,
+// DS v3.4 portfolio; the theme toggle is in the panel header).
 // Content padding (owner decision 2026-11-14, in his words: the
 // content section, whose content varies by the selected menu item,
 // has 32px padding left/right, 8px on mobile, 24px from the top):

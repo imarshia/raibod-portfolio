@@ -1,4 +1,4 @@
-// components/ui/text-field.tsx: Raibod form-field pieces (Design System v3.3 section 5).
+// components/ui/text-field.tsx: Raibod form-field pieces (Design System v3.4 section 5).
 // Composition: TextField > Label + Input (or TextArea) + Description + FieldError.
 // Label is always visible above the field. Placeholder is not a label.
 // Validation lives only on TextField; Input is a primitive with no validation

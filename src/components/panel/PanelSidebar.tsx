@@ -82,10 +82,15 @@ function isItemActive(pathname: string, href: string): boolean {
 // pixel by pixel 2026-11-14): items 40px tall, nav gap 4px, and the
 // divider carries margin-top 3px so it lands at y=343 and the sixth
 // item at 348. Desktop and mobile share this base and nav.
+// Colours are DS tokens (DS v3.4 portfolio, dark mode): the normal
+// text is text-foreground (Figma #333333 in Light; #333333 is
+// unreadable on the dark sidebar, so the token replaces it), and the
+// selected background is bg-border (#E6E8E8 in Light, matching Figma
+// exactly; #3A3A38 in Dark).
 const ITEM_BASE =
-  "flex h-10 w-full items-center px-6 py-2 text-[#333333] transition-colors";
+  "flex h-10 w-full items-center px-6 py-2 text-foreground transition-colors";
 const ITEM_SELECTED =
-  "rounded-[8px_0_0_8px] bg-[#E6E8E8] text-accent shadow-[inset_-2px_0_0_var(--accent)]";
+  "rounded-[8px_0_0_8px] bg-border text-accent shadow-[inset_-2px_0_0_var(--accent)]";
 
 // The icon-text gap is 4px and the font is 14px (Figma Body-sm) in
 // both the desktop sidebar and the mobile drawer (owner decision
@@ -169,12 +174,15 @@ export function PanelSidebar({
 }) {
   return (
     <aside aria-label={asideLabel} inert={inert} className={className}>
+      {/* Drawer close button: bg-surface-2 (Figma #EBEBEC in Light;
+          #EBEBEC with a light icon would be invisible in Dark).
+          DS v3.4 portfolio, dark mode. */}
       {onClose && (
         <button
           type="button"
           aria-label="بستن منو"
           onClick={onClose}
-          className="absolute end-[17px] top-[24px] z-10 flex h-6 w-6 items-center justify-center rounded-[12px] bg-[#EBEBEC] text-foreground"
+          className="absolute end-[17px] top-[24px] z-10 flex h-6 w-6 items-center justify-center rounded-[12px] bg-surface-2 text-foreground"
         >
           <X size={16} strokeWidth={1.5} aria-hidden="true" />
         </button>
