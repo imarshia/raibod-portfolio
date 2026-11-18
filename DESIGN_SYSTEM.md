@@ -1,13 +1,13 @@
 # Raibod - Design System
 
-**Version:** 3.3 - 13 November 2026
-**Status:** Final for UI implementation. Supersedes v3.2. Approved for use by Claude Code, Daniel, and Alex.
-**Scope:** Design system only. Color, typography, spacing, icons, components, tokens, light only, print, accessibility, responsive, setup.
+**Version:** 3.4 - 18 November 2026 (Design System version; HeroUI stays v3.2 pinned)
+**Status:** Final for UI implementation. Supersedes v3.3. Approved for use by Claude Code, Daniel, and Alex. Portfolio version: orange brand accent and Light + Dark, per Arshia's decision 2026-11-17/18. The original Raibod repo keeps its own v3.3 (teal, light-only).
+**Scope:** Design system only. Color, typography, spacing, icons, components, tokens, light and dark, print, accessibility, responsive, setup.
 **Not in scope:** Product flows, roles, data model, API contract. Those are in v2.1 product specification. Send both files together. This file alone is not the whole project spec.
 **Stack:** TypeScript, React 19+, Next.js App Router, HeroUI v3.2 (pinned, see section 0), Tailwind CSS v4, PostgreSQL
 **Font:** Vazirmatn (Google Fonts, variable 100-900, arabic + latin subsets)
 **Icons:** Lucide only (lucide-react, 24x24 grid, stroke 2, sizes 16 / 20 / 24)
-**Modes:** Light only (owner decision, 2026-11-09). No dark mode, no theme toggle.
+**Modes:** Light + Dark (both required)
 **Site language:** Persian (fa)
 **Direction:** RTL (lang="fa" dir="rtl")
 **Dates in UI:** Jalali only, format YYYY/MM/DD, Latin digits, dir="ltr" on the date element
@@ -65,9 +65,17 @@ For Persian and RTL, create `app/provider.tsx` with `I18nProvider` from `@heroui
 
 The Jalali calendar mechanism is in section 5, Calendar. The calendar system comes from locale only through `I18nProvider` with the Persian calendar locale extension. Values must also be built as Jalali `CalendarDate` values, otherwise `onChange` returns Gregorian.
 
-### 0.3 Light only, no theme switch
+### 0.3 Dark Mode with next-themes
 
-The site is light-only (owner decision, 2026-11-09). There is no theme toggle and no dark mode. Do not install `next-themes`, do not add a `ThemeProvider`, do not set the `.dark` class on `html`, and do not read `prefers-color-scheme`. The root layout uses `forcedTheme="light"`. Dark token values in section 9 are defined for reference only and are not used.
+Manage theme only with `next-themes`. Do not set the `.dark` class on `html` by hand.
+
+Create a client `app/providers.tsx` with `ThemeProvider as NextThemesProvider` from `next-themes` and these props: `attribute="class"`, `defaultTheme="system"`, `enableSystem`, `disableTransitionOnChange`. In the root layout, put `suppressHydrationWarning` on the `html` tag and give `body` the classes `bg-background text-foreground`.
+
+The theme switch uses `useTheme` from `next-themes` in a client component, and rendering is deferred until after mount, because the active theme is not known in SSR. `useTheme` in this setup comes from `next-themes`, not from HeroUI. For a plain React app, HeroUI docs use `useTheme` from `@heroui/react`. For Raibod Next.js, use `next-themes` only, one theme controller per app.
+
+The next-themes install command was not seen in the HeroUI Dark Mode or Theming pages. Confirm it from the next-themes docs before adding it.
+
+If class and `data-theme` are both set by hand, keep their values in sync. With `next-themes`, only `attribute="class"` is managed.
 
 ### 0.4 AI setup for Claude Code
 
@@ -117,10 +125,10 @@ Renames from the migration docs: `Autocomplete` to `ComboBox`, `Input` to `TextF
 
 | Token | Hex | Use |
 |---|---|---|
-| `ink` | `#1E1E1C` | Primary text |
+| `ink` | `#191919` | Primary text |
 | `bone` | `#F5F2EF` | Secondary surface |
 | `mist` | `#E6E8E8` | Border, divider, neutral surface |
-| `accent` | `#13847F` | The only accent, primary action, selection, focus |
+| `accent` | `#C2410C` | The only accent, primary action, selection, focus |
 | `white` | `#FFFFFF` | Main background, card, form field |
 
 ### Accent scale
@@ -129,7 +137,9 @@ The numeric accent scale 50 to 900 was removed in v3. Use semantic variants inst
 
 | 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `#E7F3F2` | `#D0E6E5` | `#ACD4D2` | `#89C2BF` | `#5AA9A5` | `#369692` | `#13847F` | `#10706C` | `#0D5C59` | `#0A4946` | `#083533` |
+| `#FFF7ED` | `#FFEDD5` | `#FED7AA` | `#FDBA74` | `#FB923C` | `#F97316` | `#EA580C` | `#C2410C` | `#9A3412` | `#7C2D12` | `#431407` |
+
+The base accent `#C2410C` is the 700 step of the orange scale. Dark mode uses the same orange accent `#C2410C` as Light (decided by Arshia, 2026-11-17).
 
 ### Semantic tokens, Light and Dark
 
@@ -137,19 +147,19 @@ Raibod token names are kept for design reference. In code, map them to the stand
 
 | Token | Light | Dark | Note |
 |---|---|---|---|
-| `--background` | `#FFFFFF` | `#1E1E1C` | Background white was decided by Arshia |
-| `--foreground` | `#1E1E1C` | `#F5F2EF` | 16.70:1 on white, AAA |
+| `--background` | `#FFFFFF` | `#191919` | Background white was decided by Arshia |
+| `--foreground` | `#191919` | `#F5F2EF` | 17.58:1 on white, AAA |
 | `--surface` | `#FFFFFF` | `#262624` | Cards separated by a 1px border |
 | `--surface-2` / `--surface-secondary` | `#F5F2EF` | `#2E2E2C` | Table header, sidebar, hover |
-| `--muted` | `#787877` | `#A5A5A4` | `#787877` is forbidden in Dark (3.78:1) |
+| `--muted` | `#787877` | `#A5A5A4` | `#787877` is forbidden in Dark (3.98:1) |
 | `--border` | `#E6E8E8` | `#3A3A38` | |
-| `--accent` | `#13847F` | `#13847F` | Same code in Light and Dark (Arshia, 2026-11-09). Accent text on dark surface is 3.69:1: AA for large text and UI, below AA for small text. |
-| `--accent-foreground` | `#FFFFFF` | `#FFFFFF` | White on `#13847F` 4.53:1 (AA) |
-| `--accent-hover` | `#10706C` | `#10706C` | In HeroUI, hover and soft are calculated with `color-mix()` from the base color. Keep the manual Raibod values in sync, or let the calculated values win and record the choice in code. |
-| `--accent-soft` | `#E7F3F2` | `#0A4946` | Selected row, soft background |
-| `--accent-text` | `#0D5C59` | `#89C2BF` | Small accent text |
+| `--accent` | `#C2410C` | `#C2410C` | Same orange in both modes (decided by Arshia, 2026-11-17). On the dark background it is 3.40:1, below AA — do not use it for text in Dark; use `--accent-text` |
+| `--accent-foreground` | `#FFFFFF` | `#FFFFFF` | White on `#C2410C` is 5.18:1 in both modes |
+| `--accent-hover` | `#9A3412` | `#9A3412` | In HeroUI, hover and soft are calculated with `color-mix()` from the base color. Keep the manual Raibod values in sync, or let the calculated values win and record the choice in code. |
+| `--accent-soft` | `#FFEDD5` | `#431407` | Selected row, soft background |
+| `--accent-text` | `#7C2D12` | `#FDBA74` | Small accent text |
 | `--field` / `--field-background` | `#FFFFFF` | `#262624` | Input background |
-| `--focus` | `#13847F` | `#89C2BF` | Focus ring |
+| `--focus` | `#C2410C` | `#FDBA74` | Focus ring |
 | `--danger` | `#B91C1C` | `#F87171` | |
 | `--success` | `#2E7D32` | `#4ADE80` | Final, status only |
 | `--warning` | `#B45309` | `#FBBF24` | Final, status only |
@@ -164,8 +174,8 @@ Status colors are final. Use them only for status text and icons, always with a 
 
 ### Contrast, measured
 
-Light: ink on white 16.70:1 (AAA), white on accent 4.53:1 (AA), accent on white 4.53:1 (AA), accent on bone 4.06:1. Small text on surface-2 must use `accent-800 #0D5C59`.
-Dark: text on surface 13.59:1, muted `#A5A5A4` on `#1E1E1C` 6.77:1 (AA), accent `#13847F` on `#1E1E1C` 3.69:1, white on `#13847F` 4.53:1 (AA).
+Light: ink on white 17.58:1 (AAA), white on accent 5.18:1 (AA), accent on white 5.18:1 (AA), accent on bone 4.64:1 (AA). Small text on surface-2 may use accent (4.64:1); `accent-800 #9A3412` (6.55:1 on bone) is preferred for small text.
+Dark: text on surface 13.59:1, muted `#A5A5A4` on `#191919` 7.13:1 (AA), accent `#C2410C` on `#191919` 3.40:1 — below AA, so accent is not used for text in Dark; use accent-text `#FDBA74` on `#191919` 10.43:1 instead. White on accent is 5.18:1 (AA) in both modes.
 
 ### Rules
 
@@ -215,12 +225,12 @@ Fluid type for display, H1, H2: `clamp()`.
 
 - Spacing: 4px base grid, 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64.
 - Layout: sidebar 264px (collapsible to 72px), topbar 64px, content max 1440px, page padding 24px (16px on mobile).
-- Landing header: full-width bar, height 80px + 4px padding top and bottom (88px total), content width 1312px. All landing content sits within the 1312px width. Layout: logo right, nav centered (14px, gap 40px), booking CTA left. Sticky; hides on scroll down and shows on scroll up (both desktop and mobile). When scrolled, a 1px bottom border (`--border`) plus a faint shadow (`0 1px 2px rgb(0 0 0 / 0.06)`); clean at the very top. Mobile (below 1024px): fixed bar 56px + 8px padding (72px total), hamburger menu opens a modal panel over a dark backdrop.
-- Radius: `--radius: 12px`, small 8px, card 12px, field 12px, modal 16px, pill 24px. Note: the v3 default radius is larger (button and card 24px) and values are derived from `--radius`. After build, verify the rendered button radius is 12px per this file, not 24px default v3. Exception (Figma, login page only): the login button is 16px radius (Q-09); do not apply 16px to other buttons.
+- Header heights (decided 2026-11-08): landing-page header 80px; internal panel topbar 64px.
+- Radius: `--radius: 12px`, small 8px, card 12px, modal 16px, pill 24px. Note: the v3 default radius is larger (button and card 24px) and values are derived from `--radius`. After build, verify the rendered button radius is 12px per this file, not 24px default v3.
 - Shadow: card `0 1px 2px rgb(0 0 0 / 0.06)`, modal `0 8px 24px rgb(0 0 0 / 0.12)`.
 - Motion: 150ms (hover), 250ms (color / theme), 350ms (modal, drawer). Easing: `cubic-bezier(.22,.61,.36,1)`.
 - Table: row height 44px, body text 14px, header in `surface-2`, row hover in `surface-2`, selected row in `accent-soft`.
-- Form: label 14px / 600 above the field, field height 44px, field radius 12px, border `mist`, focus ring 2px `accent`, error text 12px in `danger`. (Field radius changed 2026-11-10 from 16px to 12px by owner decision: the Figma design shows 12px and the design takes priority.)
+- Form: label 14px / 600 above the field, field height 44px, border `mist`, focus ring 2px `accent`, error text 12px in `danger`.
 - Reduced motion: HeroUI animations are disabled with `data-reduce-motion="true"` on `html`. Respect `prefers-reduced-motion` with this attribute.
 - Scrollbar: use tokens `--scrollbar-thumb` and `--scrollbar-track` and attribute `data-scrollbar` with values `thin`, `default`, `none` for horizontal scroll tables. Do not write custom webkit scrollbar styles.
 
@@ -437,7 +447,7 @@ Raibod: for long forms such as prescription and order, use Drawer. Write the pla
 
 In the app root, render `<Toast.Provider />`. Calls are made with the global function `toast("text")` and `toast.success`, `toast.info`, `toast.warning`, `toast.danger`. Default `timeout` is 4000ms, which matches the 4 seconds in v3.1. `variant` values in the API are `default | accent | success | warning | danger`. There is no `info` value in the variant list, even though `toast.info` exists in the examples. For info, use the `accent` variant in HeroUI components.
 Provider defaults: `placement` is `bottom`, `maxVisibleToasts` is 3, `width` is 460, `gap` is 12. Options: `description`, `actionProps`, `indicator`, `isLoading`, `timeout`, `onClose`. With `timeout: 0` the toast stays. `toast.promise()`, `toast.update()`, `toast.close(key)`, and `toast.clear()` also exist. The timer stops on hover, focus, and when the tab is in the background.
-Raibod: the background `#1E1E1C` in Light and `#F5F2EF` in Dark from v3.1 was not seen as the HeroUI default in the docs API. Record it as a Raibod override, not as the library default. For "Prescription saved" use `toast.success`. For "Invoice issued" use `toast.success` with one action. One action max. Do not show a toast for every routine action. `Toast.CloseButton` is a Toast subcomponent, separate from the standalone `CloseButton`.
+Raibod: the background `#191919` in Light and `#F5F2EF` in Dark from v3.1 was not seen as the HeroUI default in the docs API. Record it as a Raibod override, not as the library default. For "Prescription saved" use `toast.success`. For "Invoice issued" use `toast.success` with one action. One action max. Do not show a toast for every routine action. `Toast.CloseButton` is a Toast subcomponent, separate from the standalone `CloseButton`.
 
 ### Tabs
 
@@ -505,7 +515,7 @@ Raibod: build the empty state of a table and list with `renderEmptyState` and th
 
 ### Link, Separator, Avatar, Meter, Disclosure, DateRangePicker, TimeField, Slider
 
-Link exists in v3. In beta.4 the underline variants were removed. The dedicated page returned 429 in the review and its props were not confirmed. Links inside a table, Breadcrumbs, and landing need it. Read its props from the docs page before writing v3.2 code that uses it.
+Link exists in v3. In beta.4 the underline variants were removed. The dedicated page returned 429 in the review and its props were not confirmed. Links inside a table, Breadcrumbs, and landing need it. Read its props from the docs page before writing v3.3 code that uses it.
 
 Separator exists in v3. Its v2 name was Divider. The dedicated page returned 429 and its props were not confirmed. Use `Separator` for visual separators in panels and forms, not a manual border.
 
@@ -515,31 +525,33 @@ Meter is in the component list and is described as showing a value in a set rang
 
 Disclosure and DisclosureGroup are both in the v3 component list. Disclosure is described as collapsible sections. The dedicated pages returned 429 and their props were not confirmed. Accordion covers the filter group need. For a single collapsible section such as prescription details or landing questions, use `Disclosure` and keep Accordion for filter groups.
 
-RangeCalendar, DateRangePicker, and TimeField are all in the v3 component list. Their dedicated pages were not read in this review. The monthly statement and reports need a date range selection. Use `DateRangePicker` for report and statement ranges and read its API from the docs before v3.2 code. TimeField is only needed if free time entry becomes necessary, because Raibod booking works with predefined slots.
+RangeCalendar, DateRangePicker, and TimeField are all in the v3 component list. Their dedicated pages were not read in this review. The monthly statement and reports need a date range selection. Use `DateRangePicker` for report and statement ranges and read its API from the docs before v3.3 code. TimeField is only needed if free time entry becomes necessary, because Raibod booking works with predefined slots.
 
 Slider: `Slider > Label + Slider.Output + Slider.Track > Slider.Fill + Slider.Steps + Slider.Thumb + Slider.Marks > Slider.Mark`. Props: `value` (number or number[]), `defaultValue`, `onChange`, `onChangeEnd`, `minValue` (default 0), `maxValue` (default 100), `step` (default 1), `formatOptions` (`Intl.NumberFormatOptions`), `orientation` (default `horizontal`), `isDisabled`. A range is built with an array value and several Thumbs, and each Thumb needs an `index`. Marks are only labels and do not change the value. Horizontal direction follows the RTL locale.
 Raibod: use Slider only for a numeric range such as a price range in reports. Its value is `number` or `number[]`.
 
-## 6. Light only
+## 6. Light / Dark
 
-The site is light-only (owner decision, 2026-11-09). There is no dark mode and no theme toggle.
+| | Light | Dark |
+|---|---|---|
+| Background | `#FFFFFF` | `#191919` |
+| Surface | `#FFFFFF` | `#262624` |
+| Text | `#191919` | `#F5F2EF` |
+| Muted text | `#787877` | `#A5A5A4` |
+| Accent | `#C2410C` | `#C2410C` |
+| Accent text | `#FFFFFF` | `#FFFFFF` |
 
-| | Light |
-|---|---|
-| Background | `#FFFFFF` |
-| Surface | `#FFFFFF` |
-| Text | `#1E1E1C` |
-| Muted text | `#787877` |
-| Accent | `#13847F` |
-| Accent text | `#FFFFFF` |
-
-- Frame photo area stays `#F5F2EF`. Print is always light (A5).
-- Body must always have `bg-background text-foreground` in the root layout.
-- Dark token values in section 9 are defined for reference only and are not used.
+- Toggle: Lucide `Sun` in Dark / `Moon` in Light, size 20, in the topbar.
+- Default: `prefers-color-scheme` through `next-themes` with `defaultTheme="system"` and `enableSystem`; otherwise Light. Choice persists through next-themes.
+- Switch without reload, 250ms color transition, HeroUI `.dark` / `[data-theme="dark"]` on `<html>`. The internal light and dark themes react to both the `.light` and `.dark` classes and the `data-theme="light"` and `data-theme="dark"` attributes. If both are set by hand, keep their values in sync.
+- Frame photo area stays `#F5F2EF` in both modes. Print is always light (A4).
+- What does not change in Dark: typography (size, weight, line-height), radius, spacing, layout, icons, and the red now-line in the calendar. Only color changes.
+- Combine the two Providers in one client provider file: the `I18nProvider` from section 0.2 and the `NextThemesProvider` from section 0.3. The docs pages that were read do not show the order for combining them. Confirm the order in code.
+- Body must always have `bg-background text-foreground` in the root layout, so the page canvas changes with the theme.
 
 ## 7. Print
 
-Print is always light, A5, no sidebar, no topbar, no dark mode.
+Print is always light, A4, no sidebar, no topbar, no dark mode.
 
 - Header: "عینک رایبد" + phone 09120987790.
 - Content only: prescription or invoice, with tables and borders.
@@ -569,22 +581,22 @@ Print is always light, A5, no sidebar, no topbar, no dark mode.
 
 :root {
   --background: #FFFFFF;
-  --foreground: #1E1E1C;
+  --foreground: #191919;
   --surface: #FFFFFF;
   --surface-2: #F5F2EF;
   --surface-secondary: #F5F2EF;
   --muted: #787877;
   --border: #E6E8E8;
-  --accent: #13847F;
+  --accent: #C2410C;
   --accent-foreground: #FFFFFF;
-  --accent-hover: #10706C;
-  --accent-soft: #E7F3F2;
-  --accent-text: #0D5C59;
+  --accent-hover: #9A3412;
+  --accent-soft: #FFEDD5;
+  --accent-text: #7C2D12;
   --field: #FFFFFF;
   --field-background: #FFFFFF;
   --field-hover: #F5F2EF;
   --field-focus: #FFFFFF;
-  --focus: #13847F;
+  --focus: #C2410C;
   --danger: #B91C1C;
   --success: #2E7D32;
   --warning: #B45309;
@@ -594,23 +606,23 @@ Print is always light, A5, no sidebar, no topbar, no dark mode.
 }
 
 .dark, [data-theme="dark"] {
-  --background: #1E1E1C;
+  --background: #191919;
   --foreground: #F5F2EF;
   --surface: #262624;
   --surface-2: #2E2E2C;
   --surface-secondary: #2E2E2C;
   --muted: #A5A5A4;
   --border: #3A3A38;
-  --accent: #13847F;
+  --accent: #C2410C;
   --accent-foreground: #FFFFFF;
-  --accent-hover: #10706C;
-  --accent-soft: #0A4946;
-  --accent-text: #89C2BF;
+  --accent-hover: #9A3412;
+  --accent-soft: #431407;
+  --accent-text: #FDBA74;
   --field: #262624;
   --field-background: #262624;
   --field-hover: #2E2E2C;
   --field-focus: #262624;
-  --focus: #89C2BF;
+  --focus: #FDBA74;
   --danger: #F87171;
   --success: #4ADE80;
   --warning: #FBBF24;
@@ -650,7 +662,7 @@ Print is always light, A5, no sidebar, no topbar, no dark mode.
 }
 ```
 
-Rules for code: no raw hex in JSX (`bg-accent` is correct, `bg-[#13847F]` is not correct). No raw font size (`text-h2` is correct). Icons only from `lucide-react`. HeroUI first, custom component only with these tokens. Do not use `bg-accent-500` or any numeric accent class. Allowed accent classes are `bg-accent`, `bg-accent-soft`, `bg-accent-hover`, `text-accent`, `text-accent-text`.
+Rules for code: no raw hex in JSX (`bg-accent` is correct, `bg-[#C2410C]` is not correct). No raw font size (`text-h2` is correct). Icons only from `lucide-react`. HeroUI first, custom component only with these tokens. Do not use `bg-accent-500` or any numeric accent class. Allowed accent classes are `bg-accent`, `bg-accent-soft`, `bg-accent-hover`, `text-accent`, `text-accent-text`.
 
 ## 10. File structure
 
@@ -678,29 +690,30 @@ Use this checklist before any UI is sent to Claude Code or merged.
 
 - [ ] File is `DESIGN_SYSTEM.md` in the repo root, and only tokens from section 9 are used. No raw hex. No numeric accent classes.
 - [ ] HeroUI version is pinned in `package.json`. Switch, Checkbox, RadioGroup, and calendar week/day composition match the pinned version.
-- [ ] No `HeroUIProvider` exists. `I18nProvider` with locale `fa` is in `app/provider.tsx`. The site is light-only; no theme provider, no `next-themes`, no `suppressHydrationWarning` for theme.
+- [ ] No `HeroUIProvider` exists. `I18nProvider` with locale `fa` is in `app/provider.tsx`. Theme is managed only with `next-themes`, `defaultTheme="system"`, `enableSystem`, `suppressHydrationWarning` on `html`.
 - [ ] All text sizes are from the 1.25 scale. No off-scale sizes. Rendered button radius is 12px, not the v3 default 24px.
 - [ ] UI is Persian, RTL, `lang="fa" dir="rtl"`. Dates are Jalali YYYY/MM/DD with Latin digits. Calendar uses `I18nProvider` with the Persian calendar extension and Jalali `CalendarDate` values. `firstDayOfWeek="sat"`. No fixed `weeksInMonth` for Jalali months.
 - [ ] Numbers, prices, and codes are Latin digits with `tnum`, `dir="ltr"`.
-- [ ] Light is checked for every page. The site is light-only; no Dark check.
+- [ ] Light and Dark are checked for every page. Forbidden combinations are absent: `#787877` text in Dark, `#C2410C` text in Dark (use `#FDBA74` for accent text).
 - [ ] One Primary per view. Focus is visible. Touch target is at least 44px.
 - [ ] Tabs use `variant="secondary"` with `Tabs.ListContainer`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel` and matching `id`. Status uses `Chip` with `variant="soft"`, not Badge. Cancel and delete use AlertDialog, not a plain Modal.
 - [ ] Drawer width is set with `className`, not with a size prop. Drawer placement is explicit. Toast root has `<Toast.Provider />` with placement `bottom` and max 3 toasts.
 - [ ] Table, form, modal, toast, calendar, and print match sections 5, 7, and 8. Form is inside `<Form validationBehavior="native">`. Pagination is in `Table.Footer`. Selection uses a `Checkbox` with `slot="selection"`.
-- [ ] Print is light A5, no sidebar, no topbar.
+- [ ] Print is light A4, no sidebar, no topbar.
 - [ ] Status is shown with text label, not color alone. Error is shown with icon and text, not color alone.
 - [ ] No online shop, public catalog, or cart was built. That rule comes from the product spec, and this design system does not change it.
 - [ ] MCP server and agent skill from section 0.4 are installed before Claude Code builds, and heroui.com is the API reference.
 
-## 12. Decisions closed in v3.2
+## 12. Decisions closed in v3.3
 
+- Brand colors (v3.3): black `#191919`, white `#FFFFFF`, orange accent `#C2410C` in both Light and Dark — the same orange in both modes. Decided by Arshia, 2026-11-17. Supersedes the teal accent `#13847F` (Light) and `#5AA9A5` (Dark) of v3.2. Note: `#C2410C` on the dark background is 3.40:1, below AA, so accent is not used for text in Dark; accent text is `#FDBA74` (10.43:1). Bone `#F5F2EF`, mist `#E6E8E8`, and all status colors are unchanged.
 - Background: white `#FFFFFF`. Decided by Arshia, 2026-11-05. Surface-2 is bone `#F5F2EF`.
 - Status colors: final. Values in section 1. HeroUI status list has no `info` variant, use `accent` for info in HeroUI components.
 - Date format: Jalali YYYY/MM/DD, Latin digits, `dir="ltr"`.
 - Language: Persian, RTL, fixed locale `fa` through `I18nProvider`.
 - Font: Vazirmatn.
 - Icons: Lucide only.
-- Modes: Light only, no theme toggle, no dark mode.
+- Modes: Light and Dark, both required, managed with `next-themes`.
 - Stack: TypeScript, React 19+, Next.js App Router, HeroUI v3.2 pinned, Tailwind CSS v4, PostgreSQL.
 - Tabs: `variant="secondary"`. Status: `Chip` with `variant="soft"`. Sensitive confirmations: AlertDialog. Drawer: stable, no size prop, width with `className`.
 - Toast: `<Toast.Provider />` in root, placement `bottom`, max 3, timeout 4000ms.
@@ -713,12 +726,13 @@ These do not block UI work with this design system, but must be confirmed before
 - Exact prescription fields list. Needs the shop form.
 - Lens group rule. SPH or SPH plus CYL, per eye or not.
 - SMS provider, hosting, previous data format, thickness data format, booking duration and type, confirmation method.
-- Product flows, roles, data model, and API contract. Those are in v2.1 product specification. Send v3.2 together with v2.1.
+- Product flows, roles, data model, and API contract. Those are in v2.1 product specification. Send v3.3 together with v2.1.
 - Exact Jalali locale string. The Calendar page request returned 429 in the review. Verify it in code with `@internationalized/date`. Do not quote an unverified locale string as docs.
 - Latin digits in DateField under the fa locale. Verify in code whether a numbering system setting is needed.
 - Exact placement of `isOpen` on Modal. The API table and the hooks example differ. Confirm with the installed version.
 - Switch composition in the docs page. The Switch page still shows the old composition and conflicts with the v3.2.0 release note. Confirm with the pinned version.
-- Props for Link, Separator, Avatar, Meter, Disclosure, Kbd. Their dedicated pages returned 429 in the review. Only their existence in the component list was confirmed. Read them before v3.2 code that uses them.
+- next-themes install command. Confirm from the next-themes docs.
+- Props for Link, Separator, Avatar, Meter, Disclosure, Kbd. Their dedicated pages returned 429 in the review. Only their existence in the component list was confirmed. Read them before v3.3 code that uses them.
 - Latest HeroUI patch number. Confirm from npm or the releases page before install.
 - Button automatic spinner. Not confirmed on the Button docs page. Verify with the installed version.
 - Order of `I18nProvider` and `NextThemesProvider` when combined. The docs do not specify it. Confirm in code.
@@ -730,10 +744,11 @@ These do not block UI work with this design system, but must be confirmed before
 
 ## Changelog
 
-- v3.3, 13 November 2026: Light-only (owner decision, 2026-11-09). Removed the theme toggle, the Dark Mode with next-themes section, and the Light/Dark behavior section; print is A5, not A4. Dark token values are kept for reference only and are not used.
+- v3.4, 18 November 2026: Portfolio version. Applies the v3.3 brand change (orange accent `#C2410C`, ink `#191919`) to the portfolio repo and restores Light + Dark (both required, next-themes, toggle in the topbar), superseding the repo's v3.3 light-only cleanup (Q-03, 13 November 2026: teal `#13847F`, light-only, print A5). Print is A4 per v3.3. Version bumped to v3.4 because the repo already had a v3.3 with different content.
+- v3.3, 17 November 2026: Brand colors changed by Arshia. Ink `#1E1E1C` to black `#191919`, accent teal `#13847F` to orange `#C2410C` in both Light and Dark — the same orange in both modes. New orange scale (50 `#FFF7ED` to 950 `#431407`, accent at 700). Light tokens: accent-hover `#9A3412`, accent-soft `#FFEDD5`, accent-text `#7C2D12`, focus `#C2410C`. Dark tokens: accent `#C2410C`, accent-foreground `#FFFFFF`, accent-hover `#9A3412`, accent-soft `#431407`, accent-text `#FDBA74`, focus `#FDBA74`. All contrasts re-measured: white on accent 5.18:1, accent on white 5.18:1, accent on bone 4.64:1 (AA — small text on surface-2 may now use accent, `#9A3412` preferred). In Dark, accent `#C2410C` on `#191919` is 3.40:1, below AA, so accent is not used for text in Dark; accent-text `#FDBA74` is 10.43:1. Bone, mist, and all status colors unchanged.
 - v3.2, 5 November 2026: Based on v3.1 Final and a full HeroUI docs review. Added install commands and PostCSS, no HeroUIProvider, I18nProvider with fixed fa locale, Dark Mode with next-themes, Jalali calendar mechanism, version pin, token mapping to standard HeroUI names, forbidden v2 patterns table, AlertDialog, full Toast and Drawer and Dropdown and Alert APIs, Form, Fieldset, DateField, InputGroup, Card, Surface, ListBox, EmptyState, calendar week and day views, exact Select and Autocomplete and ComboBox compositions, Link and Separator and Avatar and Meter and Disclosure and DateRangePicker and TimeField and Slider, BEM customization, body classes, reduced motion and scrollbar tokens, MCP and agent skill setup, and an unverified items list. Fixed v3.1 errors: Tabs variant is secondary not Underline, Badge is not a standalone status label, use Chip, Drawer is stable not rc and has no size prop, Modal isOpen placement is unverified, Toast has no info variant, Button automatic spinner is unconfirmed, rowHeight belongs to the Virtualizer, Switch and Checkbox and RadioGroup follow the v3.2 composition.
 - v3.1 Final, 5 November 2026: Based on v3.0. Added RTL and Jalali specification, finalized status colors, added breakpoints, print specification, accessibility section, expanded components (Select, Toast, Tabs, Pagination, Switch, Checkbox, RadioGroup, Alert, Breadcrumbs, Dropdown, Skeleton), file structure, usage rules, acceptance checklist, and closed decisions list.
 - v3.0, 5 November 2026: Tokens and HeroUI v3 components. Background white. Status colors were proposal.
-- v2.1, 5 November 2026: Product flows, roles, calendar, booking, CRM. Separate file. Send together with v3.2.
+- v2.1, 5 November 2026: Product flows, roles, calendar, booking, CRM. Separate file. Send together with v3.3.
 
-End of document. Raibod Design System v3.2. Any change needs a new version.
+End of document. Raibod Design System v3.4. Any change needs a new version.
